@@ -1,101 +1,101 @@
 app:
   version_check_url: "https://raw.githubusercontent.com/sansan0/TrendRadar/refs/heads/master/version"
-  show_version_update: true # 控制显示版本更新提示，如果 false，则不接受新版本提示
+  show_version_update: true # Control whether to show version update prompt. If false, version updates will not be displayed
 
 crawler:
-  request_interval: 1000 # 请求间隔(毫秒)
-  enable_crawler: true # 是否启用爬取新闻功能，如果 false，则直接停止程序
-  use_proxy: false # 是否启用代理，false 时为关闭
+  request_interval: 1000 # Request interval (milliseconds)
+  enable_crawler: true # Whether to enable news crawling. If false, program will stop directly
+  use_proxy: false # Whether to enable proxy. False means disabled
   default_proxy: "http://127.0.0.1:10086"
 
-# 🔸 daily（当日汇总模式）
-#   • 推送时机：按时推送(默认每小时推送一次)
-#   • 显示内容：当日所有匹配新闻 + 新增新闻区域
-#   • 适用场景：日报总结、全面了解当日热点趋势
+# 🔸 daily (Daily Summary Mode)
+#   • Push timing: Scheduled push (default: once per hour)
+#   • Display content: All matched news of the day + new news section
+#   • Use case: Daily report summary, comprehensive understanding of daily trending topics
 #
-# 🔸 current（当前榜单模式）
-#   • 推送时机：按时推送(默认每小时推送一次)
-#   • 显示内容：当前榜单匹配新闻 + 新增新闻区域
-#   • 适用场景：实时热点追踪、了解当前最火的内容
+# 🔸 current (Current Rankings Mode)
+#   • Push timing: Scheduled push (default: once per hour)
+#   • Display content: Current ranking matched news + new news section
+#   • Use case: Real-time trending tracking, understanding current hottest content
 #
-# 🔸 incremental（增量监控模式）
-#   • 推送时机：有新增才推送
-#   • 显示内容：新出现的匹配频率词新闻
-#   • 适用场景：避免重复信息干扰
+# 🔸 incremental (Incremental Monitoring Mode)
+#   • Push timing: Push only when there are new items
+#   • Display content: Newly appeared news matching frequency keywords
+#   • Use case: Avoid duplicate information interference
 
-# 推送模式选择
+# Push mode selection
 report:
-  mode: "daily" # 可选: "daily"|"incremental"|"current"
-  rank_threshold: 5 # 排名高亮阈值
+  mode: "daily" # Options: "daily"|"incremental"|"current"
+  rank_threshold: 5 # Ranking highlight threshold
 
 notification:
-  enable_notification: true # 是否启用通知功能，如果 false，则不发送手机通知
-  message_batch_size: 4000 # 消息分批大小（字节）(这个配置别动)
-  dingtalk_batch_size: 20000 # 钉钉消息分批大小（字节）(这个配置也别动)
-  feishu_batch_size: 29000 # 飞书消息分批大小（字节）
-  batch_send_interval: 3 # 批次发送间隔（秒）
-  feishu_message_separator: "━━━━━━━━━━━━━━━━━━━" # feishu 消息分割线
+  enable_notification: true # Whether to enable notification. If false, no mobile notifications will be sent
+  message_batch_size: 4000 # Message batch size (bytes) (don't modify this config)
+  dingtalk_batch_size: 20000 # DingTalk message batch size (bytes) (don't modify this config either)
+  feishu_batch_size: 29000 # Feishu message batch size (bytes)
+  batch_send_interval: 3 # Batch send interval (seconds)
+  feishu_message_separator: "━━━━━━━━━━━━━━━━━━━" # Feishu message separator line
 
-  # 🕐 推送时间窗口控制（可选功能）
-  # 用途：限制推送的时间范围，避免非工作时间打扰
-  # 适用场景：
-  #   - 只想在工作日白天接收推送（如 09:00-18:00）
-  #   - 希望在晚上固定时间收到汇总（如 20:00-22:00）
+  # 🕐 Push Time Window Control (Optional Feature)
+  # Purpose: Limit the time range for push notifications to avoid disturbances during non-work hours
+  # Use cases:
+  #   - Only want to receive pushes during work hours (e.g., 09:00-18:00)
+  #   - Want to receive summary at fixed evening time (e.g., 20:00-22:00)
   push_window:
-    enabled: false  # 是否启用推送时间窗口控制，默认关闭
-    # 注意：GitHub Actions 执行时间不稳定，时间范围建议至少留足 2 小时
-    # 如果想要精准的定时推送，建议使用 Docker 部署在个人服务器上
+    enabled: false  # Whether to enable push time window control, disabled by default
+    # Note: GitHub Actions execution time is unstable, suggest time range of at least 2 hours
+    # For precise scheduled push, recommend using Docker deployment on personal server
     time_range:
-      start: "20:00"  # 推送时间窗口开始（北京时间）
-      end: "22:00"    # 推送时间窗口结束（北京时间）
-    once_per_day: true  # 每天在时间窗口内只推送一次，如果 false，则窗口内每次执行都推送
-    push_record_retention_days: 7  # 推送记录保留天数
+      start: "20:00"  # Push time window start (Beijing Time)
+      end: "22:00"    # Push time window end (Beijing Time)
+    once_per_day: true  # Push only once per day within time window. If false, push every execution within window
+    push_record_retention_days: 7  # Push record retention days
 
-  # 请务必妥善保管好 webhooks，不要公开
-  # 如果你以 fork 的方式将本项目部署在 GitHub 上，请勿在此填写任何 webhooks，而是将 webhooks 填入 GitHub Secret
-  # 不然轻则手机上收到奇怪的广告推送，重则存在更严重的安全隐患
+  # Please keep webhooks properly secured and do not make them public
+  # If you deploy this project on GitHub via fork, do NOT fill in any webhooks here. Instead, put webhooks in GitHub Secret
+  # Otherwise, at best you'll receive strange ads on your phone, at worst there are more serious security risks
   webhooks:
-    feishu_url: "" # 飞书机器人的 webhook URL
-    dingtalk_url: "" # 钉钉机器人的 webhook URL
-    wework_url: "" # 企业微信机器人的 webhook URL
+    feishu_url: "" # Feishu bot webhook URL
+    dingtalk_url: "" # DingTalk bot webhook URL
+    wework_url: "" # WeWork (Enterprise WeChat) bot webhook URL
     telegram_bot_token: "" # Telegram Bot Token
     telegram_chat_id: "" # Telegram Chat ID
-    email_from: "" # 发件人邮箱地址
-    email_password: "" # 发件人邮箱密码或授权码
-    email_to: "" # 收件人邮箱地址，多个收件人用逗号分隔
-    email_smtp_server: "" # SMTP服务器地址（可选，留空自动识别）
-    email_smtp_port: "" # SMTP端口（可选，留空自动识别）
-    ntfy_server_url: "https://ntfy.sh" # ntfy服务器地址，默认使用公共服务，可改为自托管地址
-    ntfy_topic: "" # ntfy主题名称
-    ntfy_token: "" # ntfy访问令牌（可选，用于私有主题）
+    email_from: "" # Sender email address
+    email_password: "" # Sender email password or authorization code
+    email_to: "" # Recipient email address, multiple recipients separated by commas
+    email_smtp_server: "" # SMTP server address (optional, leave empty for auto-detection)
+    email_smtp_port: "" # SMTP port (optional, leave empty for auto-detection)
+    ntfy_server_url: "https://ntfy.sh" # ntfy server address, default uses public service, can be changed to self-hosted address
+    ntfy_topic: "" # ntfy topic name
+    ntfy_token: "" # ntfy access token (optional, for private topics)
 
-# 用于让关注度更高的新闻在更前面显示，即用算法重新组合不同平台的热搜排序形成你侧重的热搜，合起来是 1 就行
+# Used to display news with higher attention in front, i.e., use algorithm to recombine trending searches from different platforms to form your focused trending, total should be 1
 weight:
-  rank_weight: 0.6 # 排名权重
-  frequency_weight: 0.3 # 频次权重
-  hotness_weight: 0.1 # 热度权重
+  rank_weight: 0.6 # Ranking weight
+  frequency_weight: 0.3 # Frequency weight
+  hotness_weight: 0.1 # Hotness weight
 
-# name 可以定义任意名称，只具有显示作用，即使项目运行了几天后，忽然改掉 name 也不会影响代码的正常运行
+# name can be defined as any name, only has display purpose. Even if name is changed after project runs for several days, it won't affect normal code operation
 platforms:
   - id: "toutiao"
-    name: "今日头条"
+    name: "Toutiao"
   - id: "baidu"
-    name: "百度热搜"
+    name: "Baidu Hot"
   - id: "wallstreetcn-hot"
-    name: "华尔街见闻"
+    name: "Wallstreetcn"
   - id: "thepaper"
-    name: "澎湃新闻"
+    name: "Thepaper"
   - id: "bilibili-hot-search"
-    name: "bilibili 热搜"
+    name: "Bilibili Hot"
   - id: "cls-hot"
-    name: "财联社热门"
+    name: "Yicai Hot"
   - id: "ifeng"
-    name: "凤凰网"
+    name: "Ifeng"
   - id: "tieba"
-    name: "贴吧"
+    name: "Tieba"
   - id: "weibo"
-    name: "微博"
+    name: "Weibo"
   - id: "douyin"
-    name: "抖音"
+    name: "Douyin"
   - id: "zhihu"
-    name: "知乎"
+    name: "Zhihu"
