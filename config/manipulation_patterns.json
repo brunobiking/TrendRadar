@@ -1,0 +1,147 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2025-11-19",
+  "description": "Manipulation detection patterns and keywords for stock news analysis",
+  "urgency_keywords": {
+    "weight": 15,
+    "description": "Words indicating artificial urgency to pressure buying/selling",
+    "keywords": [
+      "NOW",
+      "URGENT",
+      "LAST CHANCE",
+      "DON'T MISS",
+      "HURRY",
+      "LIMITED TIME",
+      "ACT NOW",
+      "TODAY ONLY",
+      "ENDING SOON",
+      "IMMEDIATE",
+      "CRITICAL",
+      "MUST ACT",
+      "RUSH",
+      "QUICK"
+    ]
+  },
+  "guarantee_keywords": {
+    "weight": 20,
+    "description": "Promises of guaranteed returns (major red flag)",
+    "keywords": [
+      "GUARANTEED",
+      "GUARANTEE",
+      "100% PROFIT",
+      "CAN'T LOSE",
+      "RISK-FREE",
+      "SURE THING",
+      "CERTAIN WIN",
+      "NO RISK",
+      "GUARANTEED RETURNS",
+      "FOOLPROOF",
+      "SUREFIRE",
+      "ZERO RISK"
+    ]
+  },
+  "hyperbolic_keywords": {
+    "weight": 18,
+    "description": "Extreme exaggeration indicating promotional content",
+    "keywords": [
+      "10X",
+      "100X",
+      "1000X",
+      "MOONSHOT",
+      "TO THE MOON",
+      "ROCKET",
+      "EXPLODE",
+      "MASSIVE GAINS",
+      "HUGE PROFITS",
+      "SKYROCKET",
+      "ASTRONOMICAL",
+      "UNLIMITED",
+      "UNBELIEVABLE",
+      "INCREDIBLE OPPORTUNITY"
+    ]
+  },
+  "emoji_patterns": {
+    "weight": 10,
+    "description": "Excessive use of emojis (unprofessional)",
+    "threshold": 5,
+    "common_emojis": [
+      "🚀",
+      "💎",
+      "📈",
+      "💰",
+      "🔥",
+      "⚡",
+      "💸",
+      "🤑"
+    ]
+  },
+  "promotional_language": {
+    "weight": 12,
+    "description": "Language typical of promotional content",
+    "keywords": [
+      "BUY NOW",
+      "DON'T WAIT",
+      "JOIN US",
+      "EXCLUSIVE",
+      "SECRET",
+      "INSIDER",
+      "MEMBERS ONLY",
+      "VIP ACCESS",
+      "LIMITED SPOTS",
+      "ACT FAST",
+      "BREAKTHROUGH",
+      "REVOLUTIONARY"
+    ]
+  },
+  "lack_of_sources": {
+    "weight": 15,
+    "description": "Indicators of unverified claims",
+    "patterns": [
+      "NO_CITATIONS",
+      "NO_AUTHOR",
+      "ANONYMOUS_SOURCE",
+      "UNVERIFIED",
+      "RUMOR",
+      "ALLEGEDLY",
+      "SOURCES SAY",
+      "INSIDER CLAIMS"
+    ]
+  },
+  "fud_keywords": {
+    "weight": 15,
+    "description": "Fear, Uncertainty, and Doubt manipulation tactics",
+    "keywords": [
+      "CRASH",
+      "DISASTER",
+      "COLLAPSE",
+      "DOOMED",
+      "FAILING",
+      "BANKRUPTCY",
+      "GOING TO ZERO",
+      "WORTHLESS",
+      "SCAM",
+      "FRAUD",
+      "PONZI"
+    ]
+  },
+  "volume_spike_threshold": {
+    "articles_per_hour": 10,
+    "description": "Number of articles in 1-2 hour window that triggers alert"
+  },
+  "sentiment_change_threshold": {
+    "points_24h": 30,
+    "description": "Sentiment point change in 24 hours that triggers alert"
+  },
+  "coordinated_posting": {
+    "time_window_minutes": 15,
+    "min_sources": 3,
+    "description": "Multiple sources posting same content within time window"
+  },
+  "content_quality_thresholds": {
+    "excellent": 0,
+    "good": 20,
+    "questionable": 40,
+    "suspicious": 60,
+    "high_risk": 80
+  }
+}
