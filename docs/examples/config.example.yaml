@@ -53,17 +53,6 @@ notification:
   # Set to false to only generate HTML reports without notifications
   enable_notification: true
   
-  # Message batch sizes (don't modify unless you encounter errors)
-  message_batch_size: 4000      # Telegram, WeWork
-  dingtalk_batch_size: 20000    # DingTalk
-  feishu_batch_size: 29000      # Feishu
-  
-  # Interval between batch sends (seconds)
-  batch_send_interval: 3
-  
-  # Visual separator for Feishu messages
-  feishu_message_separator: "━━━━━━━━━━━━━━━━━━━"
-  
   # ---------------------------------------------------------------------------
   # PUSH TIME WINDOW (Optional Feature)
   # ---------------------------------------------------------------------------
@@ -94,25 +83,6 @@ notification:
   # - Never commit sensitive credentials to public repositories!
   
   webhooks:
-    # Feishu Bot Webhook
-    # Get from: https://botbuilder.feishu.cn/
-    feishu_url: ""
-    
-    # DingTalk Bot Webhook
-    # Get from: DingTalk PC client → Group settings → Bot
-    # Security keyword required: "Trending" or "热点"
-    dingtalk_url: ""
-    
-    # WeWork Bot Webhook
-    # Get from: WeWork app → Group settings → Message Push
-    wework_url: ""
-    
-    # Telegram Bot
-    # Get bot token from: @BotFather in Telegram
-    # Get chat ID from: https://api.telegram.org/bot<TOKEN>/getUpdates
-    telegram_bot_token: ""
-    telegram_chat_id: ""
-    
     # Email Notification
     # Sender email address
     email_from: ""
@@ -352,10 +322,6 @@ platforms:
 # 
 # 2. GitHub Secrets (for GitHub Actions deployment):
 #    Store sensitive data in: Settings → Secrets and variables → Actions
-#    - TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
-#    - WEWORK_WEBHOOK_URL
-#    - FEISHU_WEBHOOK_URL
-#    - DINGTALK_WEBHOOK_URL
 #    - EMAIL_FROM, EMAIL_PASSWORD, EMAIL_TO
 #    - NTFY_TOPIC, NTFY_SERVER_URL, NTFY_TOKEN
 # 
