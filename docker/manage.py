@@ -49,7 +49,7 @@ def parse_cron_schedule(cron_expr):
         
         minute, hour, day, month, weekday = parts
         
-        # 分析minutes
+        # Parse minutes
         if minute == "*":
             minute_desc = "everyminutes"
         elif minute.startswith("*/"):
@@ -60,7 +60,7 @@ def parse_cron_schedule(cron_expr):
         else:
             minute_desc = f"at{minute}minutes"
         
-        # 分析hours
+        # Parse hours
         if hour == "*":
             hour_desc = "everyhours"
         elif hour.startswith("*/"):
@@ -71,22 +71,22 @@ def parse_cron_schedule(cron_expr):
         else:
             hour_desc = f"at{hour}o'clock"
         
-        # 分析日期
+        # Parse date
         if day == "*":
             day_desc = "every day"
         elif day.startswith("*/"):
             interval = day[2:]
-            day_desc = f"every{interval}天"
+            day_desc = f"Every {interval} days"
         else:
             day_desc = f"every month{day}day"
         
-        # 分析month份
+        # Parse months
         if month == "*":
             month_desc = "every month"
         else:
             month_desc = f"at{month}month"
         
-        # 分析星期
+        # Parse weekday
         weekday_names = {
             "0": "Sunday", "1": "Monday", "2": "Tuesday", "3": "Wednesday", 
             "4": "Thursday", "5": "Friday", "6": "Saturday", "7": "Sunday"
@@ -96,18 +96,18 @@ def parse_cron_schedule(cron_expr):
         else:
             weekday_desc = f"at{weekday_names.get(weekday, weekday)}"
         
-        # 组合描述
+        # Combine description
         if minute.startswith("*/") and hour == "*" and day == "*" and month == "*" and weekday == "*":
-            # 简单的间隔模式，如 */30 * * * *
+            # Simple interval pattern, e.g. */30 * * * *
             return f"every{minute[2:]}minutesexecute once"
         elif hour != "*" and minute != "*" and day == "*" and month == "*" and weekday == "*":
-            # every day特定时间，如 0 9 * * *
+            # Specific time every day, e.g. 0 9 * * *
             return f"every day{hour}:{minute.zfill(2)}execute"
         elif weekday != "*" and day == "*":
-            # every周特定时间
+            # Specific time every week
             return f"{weekday_desc}{hour}:{minute.zfill(2)}execute"
         else:
-            # 复杂模式，显示详细信息
+            # Complex pattern, show detailed information
             desc_parts = [part for part in [month_desc, day_desc, weekday_desc, hour_desc, minute_desc] if part and part != "every month" and part != "every day" and part != "everyhours"]
             if desc_parts:
                 return " ".join(desc_parts) + "execute"
@@ -122,7 +122,7 @@ def show_status():
     """Show container status"""
     print("📊 Container status:")
 
-    # 检查 PID 1 状态
+    # Check PID 1 status
     supercronic_is_pid1 = False
     pid1_cmdline = ""
     try:
@@ -139,7 +139,7 @@ def show_status():
     except Exception as e:
         print(f"  ❌ Unable to read PID 1 information: {e}")
 
-    # 检查环境变量
+    # Check environment variables
     cron_schedule = os.environ.get("CRON_SCHEDULE", "not set")
     run_mode = os.environ.get("RUN_MODE", "not set")
     immediate_run = os.environ.get("IMMEDIATE_RUN", "not set")
@@ -147,23 +147,23 @@ def show_status():
     print(f"  ⚙️ Runtime configuration:")
     print(f"    CRON_SCHEDULE: {cron_schedule}")
     
-    # 解析并显示cron表达式的含义
+    # Parse and display cron expression meaning
     cron_description = parse_cron_schedule(cron_schedule)
     print(f"    ⏰ Execution frequency: {cron_description}")
     
     print(f"    RUN_MODE: {run_mode}")
     print(f"    IMMEDIATE_RUN: {immediate_run}")
 
-    # 检查配置文件
+    # Check configuration files
     config_files = ["/app/config/config.yaml", "/app/config/frequency_words.txt"]
     print("  📁 Configuration files:")
     for file_path in config_files:
         if Path(file_path).exists():
             print(f"    ✅ {Path(file_path).name}")
         else:
-            print(f"    ❌ {Path(file_path).name} 缺失")
+            print(f"    ❌ {Path(file_path).name} missing")
 
-    # 检查关键文件
+    # Check key files
     key_files = [
         ("/usr/local/bin/supercronic-linux-amd64", "supercronic binary"),
         ("/usr/local/bin/supercronic", "supercronic symlink"),
@@ -175,7 +175,7 @@ def show_status():
     for file_path, description in key_files:
         if Path(file_path).exists():
             print(f"    ✅ {description}: exists")
-            # 对于crontab file，显示content
+            # For crontab file, display content
             if file_path == "/tmp/crontab":
                 try:
                     with open(file_path, 'r') as f:
@@ -184,19 +184,19 @@ def show_status():
                 except:
                     pass
         else:
-            print(f"    ❌ {description}: 不exists")
+            print(f"    ❌ {description}: does not exist")
 
-    # 检查容器运行时间
+    # Check container runtime
     print("  ⏱️ Container time information:")
     try:
-        # 检查 PID 1 的启动时间
+        # Check PID 1 start time
         with open('/proc/1/stat', 'r') as f:
             stat_content = f.read().strip().split()
             if len(stat_content) >= 22:
-                # starttime 是第22个字段（索引21）
+                # starttime is the 22nd field (index 21)
                 starttime_ticks = int(stat_content[21])
                 
-                # 读取系统启动时间
+                # Read system boot time
                 with open('/proc/stat', 'r') as stat_f:
                     for line in stat_f:
                         if line.startswith('btime'):
@@ -205,7 +205,7 @@ def show_status():
                     else:
                         boot_time = 0
                 
-                # 读取系统时钟频率
+                # Read system clock frequency
                 clock_ticks = os.sysconf(os.sysconf_names['SC_CLK_TCK'])
                 
                 if boot_time > 0:
@@ -226,22 +226,22 @@ def show_status():
     except Exception as e:
         print(f"    ❌ Time check failed: {e}")
 
-    # 状态总结和建议
+    # Status summary and recommendations
     print("  📊 Status summary:")
     if supercronic_is_pid1:
         print("    ✅ supercronic running correctly as PID 1")
         print("    ✅ Scheduled tasks should work normally")
         
-        # 显示当前的调度信息
+        # Display current scheduling information
         if cron_schedule != "not set":
             print(f"    ⏰ Current schedule: {cron_description}")
             
-            # 提供一些常见的调度建议
+            # Provide some common scheduling recommendations
             if "minutes" in cron_description and "every30minutes" not in cron_description and "every60minutes" not in cron_description:
                 print("    💡 Frequent execution mode, suitable for real-time monitoring")
             elif "hours" in cron_description:
-                print("    💡 按hoursexecute模式，适合定期汇总")
-            elif "天" in cron_description:
+                print("    💡 Hourly execution mode, suitable for regular summaries")
+            elif "days" in cron_description:
                 print("    💡 Daily execution mode, suitable for daily report generation")
         
         print("    💡 If scheduled tasks don't execute, check:")
@@ -256,12 +256,12 @@ def show_status():
         print("       • Restart container: docker restart trend-radar")
         print("       • Check container logs: docker logs trend-radar")
 
-    # 显示日志检查建议
+    # Display log check recommendations
     print("  📋 Runtime status check:")
     print("    • View complete container logs: docker logs trend-radar")
     print("    • View real-time logs: docker logs -f trend-radar")
     print("    • Manual execution test: python manage.py run")
-    print("    • Restart container服务: docker restart trend-radar")
+    print("    • Restart container service: docker restart trend-radar")
 
 
 def show_config():
@@ -303,7 +303,7 @@ def show_config():
         except Exception as e:
             print(f"    Read failed: {e}")
     else:
-        print("  📅 Crontab文件不exists")
+        print("  📅 Crontab file does not exist")
 
 
 def show_files():
@@ -312,17 +312,17 @@ def show_files():
 
     output_dir = Path("/app/output")
     if not output_dir.exists():
-        print("  📭 输出目录不exists")
+        print("  📭 Output directory does not exist")
         return
 
-    # 显示最近的文件
+    # Display recent files
     date_dirs = sorted([d for d in output_dir.iterdir() if d.is_dir()], reverse=True)
 
     if not date_dirs:
         print("  📭 Output directory is empty")
         return
 
-    # 显示最近2天的文件
+    # Display files from last 2 days
     for date_dir in date_dirs[:2]:
         print(f"  📅 {date_dir.name}:")
         for subdir in ["html", "txt"]:
@@ -349,10 +349,10 @@ def show_logs():
     print("📋 Real-time logs (Press Ctrl+C to exit):")
     print("💡 Hint: This will show PID 1 process output")
     try:
-        # 尝试多种方法查看日志
+        # Try multiple methods to view logs
         log_files = [
-            "/proc/1/fd/1",  # PID 1 的标准输出
-            "/proc/1/fd/2",  # PID 1 的标准错误
+            "/proc/1/fd/1",  # PID 1 standard output
+            "/proc/1/fd/2",  # PID 1 standard error
         ]
         
         for log_file in log_files:
@@ -375,7 +375,7 @@ def restart_supercronic():
     print("🔄 Restarting supercronic...")
     print("⚠️ Note: supercronic is PID 1, cannot restart directly")
     
-    # 检查当前 PID 1
+    # Check current PID 1
     try:
         with open('/proc/1/cmdline', 'r') as f:
             pid1_cmdline = f.read().replace('\x00', ' ').strip()
@@ -386,7 +386,7 @@ def restart_supercronic():
             print("  💡 To restart supercronic, need to restart entire container:")
             print("    docker restart trend-radar")
         else:
-            print("  ❌ PID 1 is not supercronic，这是异常状态")
+            print("  ❌ PID 1 is not supercronic, this is an abnormal state")
             print("  💡 建议Restart container以修复问题:")
             print("    docker restart trend-radar")
     except Exception as e:

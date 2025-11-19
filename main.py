@@ -23,11 +23,11 @@ import yaml
 VERSION = "3.0.5"
 
 
-# === SMTP邮件configuration ===
+# === SMTP Email Configuration ===
 SMTP_CONFIGS = {
     # Gmail（use STARTTLS）
     "gmail.com": {"server": "smtp.gmail.com", "port": 587, "encryption": "TLS"},
-    # QQ邮箱（use SSL，更稳定）
+    # QQ Mail (use SSL, more stable)
     "qq.com": {"server": "smtp.qq.com", "port": 465, "encryption": "SSL"},
     # Outlook（use STARTTLS）
     "outlook.com": {
@@ -41,12 +41,12 @@ SMTP_CONFIGS = {
         "encryption": "TLS",
     },
     "live.com": {"server": "smtp-mail.outlook.com", "port": 587, "encryption": "TLS"},
-    # 网易邮箱（use SSL，更稳定）
+    # NetEase Mail (use SSL, more stable)
     "163.com": {"server": "smtp.163.com", "port": 465, "encryption": "SSL"},
     "126.com": {"server": "smtp.126.com", "port": 465, "encryption": "SSL"},
-    # 新浪邮箱（use SSL）
+    # Sina Mail (use SSL)
     "sina.com": {"server": "smtp.sina.com", "port": 465, "encryption": "SSL"},
-    # 搜狐邮箱（use SSL）
+    # Sohu Mail (use SSL)
     "sohu.com": {"server": "smtp.sohu.com", "port": 465, "encryption": "SSL"},
 }
 
@@ -64,7 +64,7 @@ def load_config():
 
     print(f"Configuration file loaded successfully: {config_path}")
 
-    # 构建configuration
+    # Build configuration
     config = {
         "VERSION_CHECK_URL": config_data["app"]["version_check_url"],
         "SHOW_VERSION_UPDATE": config_data["app"]["show_version_update"],
@@ -131,7 +131,7 @@ def load_config():
         "PLATFORMS": config_data["platforms"],
     }
 
-    # 通知渠道configuration（环境变量优先）
+    # Notification channel configuration (environment variables take priority)
     notification = config_data.get("notification", {})
     webhooks = notification.get("webhooks", {})
 
@@ -151,7 +151,7 @@ def load_config():
         "TELEGRAM_CHAT_ID", ""
     ).strip() or webhooks.get("telegram_chat_id", "")
 
-    # 邮件configuration
+    # Email configuration
     config["EMAIL_FROM"] = os.environ.get("EMAIL_FROM", "").strip() or webhooks.get(
         "email_from", ""
     )
@@ -168,7 +168,7 @@ def load_config():
         "EMAIL_SMTP_PORT", ""
     ).strip() or webhooks.get("email_smtp_port", "")
 
-    # ntfyconfiguration
+    # ntfy configuration
     config["NTFY_SERVER_URL"] = os.environ.get(
         "NTFY_SERVER_URL", "https://ntfy.sh"
     ).strip() or webhooks.get("ntfy_server_url", "https://ntfy.sh")
@@ -220,18 +220,18 @@ print(f"Number of monitoring platforms: {len(CONFIG['PLATFORMS'])}")
 
 # === Utility Functions ===
 def get_beijing_time():
-    """Fetching北京time"""
+    """Get Beijing time"""
     return datetime.now(pytz.timezone("Asia/Shanghai"))
 
 
 def format_date_folder():
     """Format date folder"""
-    return get_beijing_time().strftime("%Y年%m月%d日")
+    return get_beijing_time().strftime("%Y-%m-%d")
 
 
 def format_time_filename():
     """Format time filename"""
-    return get_beijing_time().strftime("%H时%M分")
+    return get_beijing_time().strftime("%H-%M")
 
 
 def clean_title(title: str) -> str:
@@ -250,7 +250,7 @@ def ensure_directory_exists(directory: str):
 
 
 def get_output_path(subfolder: str, filename: str) -> str:
-    """Fetchingoutput路径"""
+    """Get output path"""
     date_folder = format_date_folder()
     output_dir = Path("output") / date_folder / subfolder
     ensure_directory_exists(str(output_dir))
@@ -280,12 +280,12 @@ def check_version_update(
         remote_version = response.text.strip()
         print(f"Current version: {current_version}, Remote version: {remote_version}")
 
-        # compare版本
+        # Compare versions
         def parse_version(version_str):
             try:
                 parts = version_str.strip().split(".")
                 if len(parts) != 3:
-                    raise ValueError("版本号格式not正确")
+                    raise ValueError("Version format is incorrect")
                 return int(parts[0]), int(parts[1]), int(parts[2])
             except:
                 return 0, 0, 0
@@ -302,7 +302,7 @@ def check_version_update(
 
 
 def is_first_crawl_today() -> bool:
-    """检测是否是today#once爬取"""
+    """Detect if this is the first crawl today"""
     date_folder = format_date_folder()
     txt_dir = Path("output") / date_folder / "txt"
 
@@ -327,7 +327,7 @@ def html_escape(text: str) -> str:
     )
 
 
-# === pushrecord管理 ===
+# === Push Record Management ===
 class PushRecordManager:
     """Push Record Manager"""
 
@@ -401,7 +401,7 @@ class PushRecordManager:
         current_time = now.strftime("%H:%M")
     
         def normalize_time(time_str: str) -> str:
-            """将time字符串标准化为 HH:MM 格式"""
+            """Normalize time string to HH:MM format"""
             try:
                 parts = time_str.strip().split(":")
                 if len(parts) != 2:
@@ -425,14 +425,14 @@ class PushRecordManager:
         result = normalized_start <= normalized_current <= normalized_end
     
         if not result:
-            print(f"timewindowdetermine：current {normalized_current}，window {normalized_start}-{normalized_end}")
+            print(f"Time window determination: current {normalized_current}, window {normalized_start}-{normalized_end}")
     
         return result
 
 
-# === dataFetching ===
+# === Data Fetching ===
 class DataFetcher:
-    """dataFetching器"""
+    """Data Fetcher"""
 
     def __init__(self, proxy_url: Optional[str] = None):
         self.proxy_url = proxy_url
@@ -444,7 +444,7 @@ class DataFetcher:
         min_retry_wait: int = 3,
         max_retry_wait: int = 5,
     ) -> Tuple[Optional[str], str, str]:
-        """Fetching指定IDdata，支持重试"""
+        """Fetch data for specified ID, with retry support"""
         if isinstance(id_info, tuple):
             id_value, alias = id_info
         else:
@@ -476,7 +476,7 @@ class DataFetcher:
                 data_text = response.text
                 data_json = json.loads(data_text)
 
-                status = data_json.get("status", "未知")
+                status = data_json.get("status", "unknown")
                 if status not in ["success", "cache"]:
                     raise ValueError(f"Response status abnormal: {status}")
 
@@ -535,7 +535,7 @@ class DataFetcher:
                                 "mobileUrl": mobile_url,
                             }
                 except json.JSONDecodeError:
-                    print(f"Parsing {id_value} 响应failed")
+                    print(f"Failed to parse {id_value} response")
                     failed_ids.append(id_value)
                 except Exception as e:
                     print(f"Processing {id_value} data error: {e}")
@@ -559,14 +559,14 @@ def save_titles_to_file(results: Dict, id_to_name: Dict, failed_ids: List) -> st
 
     with open(file_path, "w", encoding="utf-8") as f:
         for id_value, title_data in results.items():
-            # id | name 或 id
+            # id | name or id
             name = id_to_name.get(id_value)
             if name and name != id_value:
                 f.write(f"{id_value} | {name}\n")
             else:
                 f.write(f"{id_value}\n")
 
-            # 按rankingsorttitle
+            # Sort titles by ranking
             sorted_titles = []
             for title, info in title_data.items():
                 cleaned_title = clean_title(title)
@@ -596,7 +596,7 @@ def save_titles_to_file(results: Dict, id_to_name: Dict, failed_ids: List) -> st
             f.write("\n")
 
         if failed_ids:
-            f.write("==== 以下IDRequestfailed ====\n")
+            f.write("==== Following IDs Request Failed ====\n")
             for id_value in failed_ids:
                 f.write(f"{id_value}\n")
 
@@ -658,7 +658,7 @@ def load_frequency_words(
 
 
 def parse_file_titles(file_path: Path) -> Tuple[Dict, Dict]:
-    """Parsing单个txt文件的titledata，return(titles_by_id, id_to_name)"""
+    """Parse title data from a single txt file, return (titles_by_id, id_to_name)"""
     titles_by_id = {}
     id_to_name = {}
 
@@ -667,14 +667,14 @@ def parse_file_titles(file_path: Path) -> Tuple[Dict, Dict]:
         sections = content.split("\n\n")
 
         for section in sections:
-            if not section.strip() or "==== 以下IDRequestfailed ====" in section:
+            if not section.strip() or "==== Following IDs Request Failed ====" in section:
                 continue
 
             lines = section.strip().split("\n")
             if len(lines) < 2:
                 continue
 
-            # id | name 或 id
+            # id | name or id
             header_line = lines[0].strip()
             if " | " in header_line:
                 parts = header_line.split(" | ", 1)
@@ -693,19 +693,19 @@ def parse_file_titles(file_path: Path) -> Tuple[Dict, Dict]:
                         title_part = line.strip()
                         rank = None
 
-                        # 提取ranking
+                        # Extract ranking
                         if ". " in title_part and title_part.split(". ")[0].isdigit():
                             rank_str, title_part = title_part.split(". ", 1)
                             rank = int(rank_str)
 
-                        # 提取 MOBILE URL
+                        # Extract mobile URL
                         mobile_url = ""
                         if " [MOBILE:" in title_part:
                             title_part, mobile_part = title_part.rsplit(" [MOBILE:", 1)
                             if mobile_part.endswith("]"):
                                 mobile_url = mobile_part[:-1]
 
-                        # 提取 URL
+                        # Extract URL
                         url = ""
                         if " [URL:" in title_part:
                             title_part, url_part = title_part.rsplit(" [URL:", 1)
@@ -722,7 +722,7 @@ def parse_file_titles(file_path: Path) -> Tuple[Dict, Dict]:
                         }
 
                     except Exception as e:
-                        print(f"Parsingtitle行出错: {line}, error: {e}")
+                        print(f"Error parsing title line: {line}, error: {e}")
 
     return titles_by_id, id_to_name
 
@@ -730,7 +730,7 @@ def parse_file_titles(file_path: Path) -> Tuple[Dict, Dict]:
 def read_all_today_titles(
     current_platform_ids: Optional[List[str]] = None,
 ) -> Tuple[Dict, Dict, Dict]:
-    """readtodayAlltitle文件，支持按currentMonitoring platformsfilter"""
+    """Read all title files from today, with filtering by current monitoring platforms"""
     date_folder = format_date_folder()
     txt_dir = Path("output") / date_folder / "txt"
 
@@ -778,7 +778,7 @@ def process_source_data(
     all_results: Dict,
     title_info: Dict,
 ) -> None:
-    """Processingsourcedata，merge重复title"""
+    """Process source data, merge duplicate titles"""
     if source_id not in all_results:
         all_results[source_id] = title_data
 
@@ -845,7 +845,7 @@ def process_source_data(
 
 
 def detect_latest_new_titles(current_platform_ids: Optional[List[str]] = None) -> Dict:
-    """Detect new titles in today's latest batch，支持按currentMonitoring platformsfilter"""
+    """Detect new titles in today's latest batch, with filtering by current monitoring platforms"""
     date_folder = format_date_folder()
     txt_dir = Path("output") / date_folder / "txt"
 
@@ -856,11 +856,11 @@ def detect_latest_new_titles(current_platform_ids: Optional[List[str]] = None) -
     if len(files) < 2:
         return {}
 
-    # Parsinglatest文件
+    # Parse latest file
     latest_file = files[-1]
     latest_titles, _ = parse_file_titles(latest_file)
 
-    # 如果指定了currentplatformlist，filterlatest文件data
+    # If current platform list is specified, filter latest file data
     if current_platform_ids is not None:
         filtered_latest_titles = {}
         for source_id, title_data in latest_titles.items():
@@ -868,7 +868,7 @@ def detect_latest_new_titles(current_platform_ids: Optional[List[str]] = None) -
                 filtered_latest_titles[source_id] = title_data
         latest_titles = filtered_latest_titles
 
-    # 汇total历史title（按platformfilter）
+    # Collect all historical titles (filtered by platform)
     historical_titles = {}
     for file_path in files[:-1]:
         historical_data, _ = parse_file_titles(file_path)
@@ -887,7 +887,7 @@ def detect_latest_new_titles(current_platform_ids: Optional[List[str]] = None) -
             for title in titles_data.keys():
                 historical_titles[source_id].add(title)
 
-    # 找出New titles
+    # Find new titles
     new_titles = {}
     for source_id, latest_source_titles in latest_titles.items():
         historical_set = historical_titles.get(source_id, set())
@@ -915,7 +915,7 @@ def calculate_news_weight(
     count = title_data.get("count", len(ranks))
     weight_config = CONFIG["WEIGHT_CONFIG"]
 
-    # ranking权重：Σ(11 - min(rank, 10)) / 出现count
+    # Ranking weight: Σ(11 - min(rank, 10)) / appearance count
     rank_scores = []
     for rank in ranks:
         score = 11 - min(rank, 10)
@@ -923,10 +923,10 @@ def calculate_news_weight(
 
     rank_weight = sum(rank_scores) / len(ranks) if ranks else 0
 
-    # frequency权重：min(出现count, 10) × 10
+    # Frequency weight: min(appearance count, 10) × 10
     frequency_weight = min(count, 10) * 10
 
-    # 热度加成：highrankingcount / total出现count × 100
+    # Popularity bonus: high ranking count / total appearance count × 100
     high_rank_count = sum(1 for rank in ranks if rank <= rank_threshold)
     hotness_ratio = high_rank_count / len(ranks) if ranks else 0
     hotness_weight = hotness_ratio * 100
@@ -944,13 +944,13 @@ def matches_word_groups(
     title: str, word_groups: List[Dict], filter_words: List[str]
 ) -> bool:
     """Check if title matches word group rules"""
-    # 如果没有configurationword group，则matchAlltitle（支持display全部news）
+    # If no word groups configured, match all titles (support displaying all news)
     if not word_groups:
         return True
 
     title_lower = title.lower()
 
-    # filter词check
+    # Filter word check
     if any(filter_word.lower() in title_lower for filter_word in filter_words):
         return False
 
@@ -959,7 +959,7 @@ def matches_word_groups(
         required_words = group["required"]
         normal_words = group["normal"]
 
-        # 必须词check
+        # Required word check
         if required_words:
             all_required_present = all(
                 req_word.lower() in title_lower for req_word in required_words
@@ -967,7 +967,7 @@ def matches_word_groups(
             if not all_required_present:
                 continue
 
-        # 普通词check
+        # Normal word check
         if normal_words:
             any_normal_present = any(
                 normal_word.lower() in title_lower for normal_word in normal_words
@@ -1042,26 +1042,26 @@ def count_word_frequency(
 ) -> Tuple[List[Dict], int]:
     """Count word frequency，Support required words, frequency words, filter words，and mark new titles"""
 
-    # 如果没有configurationword group，createonecontainsAllnews的虚拟word group
+    # If no word groups configured, create a virtual word group containing all news
     if not word_groups:
-        print("frequency词configuration为空，将displayAllnews")
-        word_groups = [{"required": [], "normal": [], "group_key": "全部news"}]
-        filter_words = []  # 清空filter词，displayAllnews
+        print("Frequency word configuration is empty, will display all news")
+        word_groups = [{"required": [], "normal": [], "group_key": "All news"}]
+        filter_words = []  # Clear filter words, display all news
 
     is_first_today = is_first_crawl_today()
 
-    # 确定Processing的data源和New标记逻辑
+    # Determine data source for processing and new marking logic
     if mode == "incremental":
         if is_first_today:
-            # incrementalmode + today#once：ProcessingAllnews，都标记为New
+            # incremental mode + first today: Process all news, all marked as new
             results_to_process = results
             all_news_are_new = True
         else:
-            # incrementalmode + today非#once：只ProcessingNew的news
+            # incremental mode + not first today: Only process new news
             results_to_process = new_titles if new_titles else {}
             all_news_are_new = True
     elif mode == "current":
-        # current mode：只Processingcurrenttimebatch次的news，但statisticsinformation来自全部历史
+        # current mode: Only process current batch news, but statistics come from all history
         if title_info:
             latest_time = None
             for source_titles in title_info.values():
@@ -1071,7 +1071,7 @@ def count_word_frequency(
                         if latest_time is None or last_time > latest_time:
                             latest_time = last_time
 
-            # 只Processing last_time 等于latesttime的news
+            # Only process news where last_time equals latest time
             if latest_time:
                 results_to_process = {}
                 for source_id, source_titles in results.items():
@@ -1086,7 +1086,7 @@ def count_word_frequency(
                             results_to_process[source_id] = filtered_titles
 
                 print(
-                    f"Current rankings mode: latest time {latest_time}，filtered out {sum(len(titles) for titles in results_to_process.values())} itemscurrent ranking news"
+                    f"Current rankings mode: latest time {latest_time}, filtered {sum(len(titles) for titles in results_to_process.values())} items of current ranking news"
                 )
             else:
                 results_to_process = results
@@ -1100,10 +1100,10 @@ def count_word_frequency(
         total_input_news = sum(len(titles) for titles in results.values())
         filter_status = (
             "show all"
-            if len(word_groups) == 1 and word_groups[0]["group_key"] == "全部news"
+            if len(word_groups) == 1 and word_groups[0]["group_key"] == "All news"
             else "keyword filtering"
         )
-        print(f"Daily Summarymode：Processing {total_input_news}  news items, mode: {filter_status}")
+        print(f"Daily summary mode: processing {total_input_news} news items, mode: {filter_status}")
 
     word_stats = {}
     total_titles = 0
@@ -1129,7 +1129,7 @@ def count_word_frequency(
             if title in processed_titles.get(source_id, {}):
                 continue
 
-            # use统一的match逻辑
+            # Use unified matching logic
             matches_frequency_words = matches_word_groups(
                 title, word_groups, filter_words
             )
@@ -1137,7 +1137,7 @@ def count_word_frequency(
             if not matches_frequency_words:
                 continue
 
-            # 如果是incrementalmode或 current mode#once，statisticsmatch的New newsnumber
+            # If incremental mode or current mode first time, count matched new news
             if (mode == "incremental" and all_news_are_new) or (
                 mode == "current" and is_first_today
             ):
@@ -1147,20 +1147,20 @@ def count_word_frequency(
             source_url = title_data.get("url", "")
             source_mobile_url = title_data.get("mobileUrl", "")
 
-            # 找到match的word group
+            # Find matching word group
             title_lower = title.lower()
             for group in word_groups:
                 required_words = group["required"]
                 normal_words = group["normal"]
 
-                # 如果是"全部news"mode，Alltitle都match#one（唯一的）word group
-                if len(word_groups) == 1 and word_groups[0]["group_key"] == "全部news":
+                # If in "all news" mode, all titles match one (unique) word group
+                if len(word_groups) == 1 and word_groups[0]["group_key"] == "All news":
                     group_key = group["group_key"]
                     word_stats[group_key]["count"] += 1
                     if source_id not in word_stats[group_key]["titles"]:
                         word_stats[group_key]["titles"][source_id] = []
                 else:
-                    # 原有的match逻辑
+                    # Original matching logic
                     if required_words:
                         all_required_present = all(
                             req_word.lower() in title_lower
@@ -1189,7 +1189,7 @@ def count_word_frequency(
                 url = source_url
                 mobile_url = source_mobile_url
 
-                # 对于 current mode，From historical statisticsFetchingcompletedata
+                # For current mode, get complete data from historical statistics
                 if (
                     mode == "current"
                     and title_info
@@ -1225,13 +1225,13 @@ def count_word_frequency(
 
                 source_name = id_to_name.get(source_id, source_id)
 
-                # determine是否为New
+                # Determine if it is new
                 is_new = False
                 if all_news_are_new:
-                    # incrementalmode下AllProcessing的news都是New，或者today#once的Allnews都是New
+                    # In incremental mode all processed news is new, or on first crawl today all news is new
                     is_new = True
                 elif new_titles and source_id in new_titles:
-                    # check是否在Newlist中
+                    # Check if in new list
                     new_titles_for_source = new_titles[source_id]
                     is_new = title in new_titles_for_source
 
@@ -1257,17 +1257,17 @@ def count_word_frequency(
 
                 break
 
-    # 最后统一print汇totalinformation
+    # Finally print total information uniformly
     if mode == "incremental":
         if is_first_today:
             total_input_news = sum(len(titles) for titles in results.values())
             filter_status = (
                 "show all"
-                if len(word_groups) == 1 and word_groups[0]["group_key"] == "全部news"
+                if len(word_groups) == 1 and word_groups[0]["group_key"] == "All news"
                 else "keyword matching"
             )
             print(
-                f"Incremental mode: today#once爬取，{total_input_news} itemsnewshas {matched_new_count} items{filter_status}"
+                f"Incremental mode: first crawl today, {total_input_news} news items, {matched_new_count} items {filter_status}"
             )
         else:
             if new_titles:
@@ -1275,14 +1275,14 @@ def count_word_frequency(
                 filter_status = (
                     "show all"
                     if len(word_groups) == 1
-                    and word_groups[0]["group_key"] == "全部news"
+                    and word_groups[0]["group_key"] == "All news"
                     else "matching keywords"
                 )
                 print(
                     f"Incremental mode: {total_new_count} itemsnew news items,  {matched_new_count} items{filter_status}"
                 )
                 if matched_new_count == 0 and len(word_groups) > 1:
-                    print("Incremental mode: 没有New newsmatching keywords，将not会Sending通知")
+                    print("Incremental mode: no new news matching keywords, will not send notification")
             else:
                 print("Incremental mode: No new news detected")
     elif mode == "current":
@@ -1290,21 +1290,21 @@ def count_word_frequency(
         if is_first_today:
             filter_status = (
                 "show all"
-                if len(word_groups) == 1 and word_groups[0]["group_key"] == "全部news"
+                if len(word_groups) == 1 and word_groups[0]["group_key"] == "All news"
                 else "keyword matching"
             )
             print(
-                f"current榜单mode：today#once爬取，{total_input_news} itemscurrent ranking newshas {matched_new_count} items{filter_status}"
+                f"Current ranking mode: first crawl today, {total_input_news} current ranking news items, {matched_new_count} items {filter_status}"
             )
         else:
             matched_count = sum(stat["count"] for stat in word_stats.values())
             filter_status = (
                 "show all"
-                if len(word_groups) == 1 and word_groups[0]["group_key"] == "全部news"
+                if len(word_groups) == 1 and word_groups[0]["group_key"] == "All news"
                 else "keyword matching"
             )
             print(
-                f"current榜单mode：{total_input_news} itemscurrent ranking newshas {matched_count} items{filter_status}"
+                f"Current ranking mode: {total_input_news} current ranking news items, {matched_count} items {filter_status}"
             )
 
     stats = []
@@ -1313,7 +1313,7 @@ def count_word_frequency(
         for source_id, title_list in data["titles"].items():
             all_titles.extend(title_list)
 
-        # 按权重sort
+        # Sort by weight
         sorted_titles = sorted(
             all_titles,
             key=lambda x: (
@@ -1351,10 +1351,10 @@ def prepare_report_data(
     """Prepare report data"""
     processed_new_titles = []
 
-    # 在incrementalmode下隐藏New news区域
+    # Hide new news section in incremental mode
     hide_new_section = mode == "incremental"
 
-    # 只有在非隐藏mode下才ProcessingNew newspartial
+    # Only process new news section when not hidden
     if not hide_new_section:
         filtered_new_titles = {}
         if new_titles and id_to_name:
@@ -1468,7 +1468,7 @@ def format_title_for_platform(
         if title_data["time_display"]:
             result += f" <font color='grey'>- {title_data['time_display']}</font>"
         if title_data["count"] > 1:
-            result += f" <font color='green'>({title_data['count']}次)</font>"
+            result += f" <font color='green'>({title_data['count']} times)</font>"
 
         return result
 
@@ -1490,7 +1490,7 @@ def format_title_for_platform(
         if title_data["time_display"]:
             result += f" - {title_data['time_display']}"
         if title_data["count"] > 1:
-            result += f" ({title_data['count']}次)"
+            result += f" ({title_data['count']} times)"
 
         return result
 
@@ -1512,7 +1512,7 @@ def format_title_for_platform(
         if title_data["time_display"]:
             result += f" - {title_data['time_display']}"
         if title_data["count"] > 1:
-            result += f" ({title_data['count']}次)"
+            result += f" ({title_data['count']} times)"
 
         return result
 
@@ -1534,7 +1534,7 @@ def format_title_for_platform(
         if title_data["time_display"]:
             result += f" <code>- {title_data['time_display']}</code>"
         if title_data["count"] > 1:
-            result += f" <code>({title_data['count']}次)</code>"
+            result += f" <code>({title_data['count']} times)</code>"
 
         return result
 
@@ -1556,7 +1556,7 @@ def format_title_for_platform(
         if title_data["time_display"]:
             result += f" `- {title_data['time_display']}`"
         if title_data["count"] > 1:
-            result += f" `({title_data['count']}次)`"
+            result += f" `({title_data['count']} times)`"
 
         return result
 
@@ -1584,7 +1584,7 @@ def format_title_for_platform(
             escaped_time = html_escape(title_data["time_display"])
             formatted_title += f" <font color='grey'>- {escaped_time}</font>"
         if title_data["count"] > 1:
-            formatted_title += f" <font color='green'>({title_data['count']}次)</font>"
+            formatted_title += f" <font color='green'>({title_data['count']} times)</font>"
 
         if title_data.get("is_new"):
             formatted_title = f"<div class='new-title'>🆕 {formatted_title}</div>"
@@ -1642,14 +1642,14 @@ def render_html_content(
     mode: str = "daily",
     update_info: Optional[Dict] = None,
 ) -> str:
-    """渲染HTMLwithin容"""
+    """Render HTML content"""
     html = """
     <!DOCTYPE html>
     <html>
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>热点news分析</title>
+        <title>Trending News Analysis</title>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
         <style>
             * { box-sizing: border-box; }
@@ -2078,10 +2078,10 @@ def render_html_content(
         <div class="container">
             <div class="header">
                 <div class="save-buttons">
-                    <button class="save-btn" onclick="saveAsImage()">save为图片</button>
-                    <button class="save-btn" onclick="saveAsMultipleImages()">分段save</button>
+                    <button class="save-btn" onclick="saveAsImage()">Save as Image</button>
+                    <button class="save-btn" onclick="saveAsMultipleImages()">Save in Segments</button>
                 </div>
-                <div class="header-title">热点news分析</div>
+                <div class="header-title">Trending News Analysis</div>
                 <div class="header-info">
                     <div class="info-item">
                         <span class="info-label">reporttype</span>
@@ -2090,29 +2090,29 @@ def render_html_content(
     # Processingreporttypedisplay
     if is_daily_summary:
         if mode == "current":
-            html += "current榜单"
+            html += "Current Rankings"
         elif mode == "incremental":
-            html += "incrementalmode"
+            html += "Incremental mode"
         else:
             html += "Daily Summary"
     else:
-        html += "real-time分析"
+        html += "Real-time Analysis"
 
     html += """</span>
                     </div>
                     <div class="info-item">
-                        <span class="info-label">newstotal数</span>
+                        <span class="info-label">Total News</span>
                         <span class="info-value">"""
 
     html += f"{total_titles} items"
 
-    # 计算filter后的热点newsnumber
+    # Calculate number of trending news after filtering
     hot_news_count = sum(len(stat["titles"]) for stat in report_data["stats"])
 
     html += """</span>
                     </div>
                     <div class="info-item">
-                        <span class="info-label">热点news</span>
+                        <span class="info-label">Trending News</span>
                         <span class="info-value">"""
 
     html += f"{hot_news_count} items"
@@ -2120,7 +2120,7 @@ def render_html_content(
     html += """</span>
                     </div>
                     <div class="info-item">
-                        <span class="info-label">生成time</span>
+                        <span class="info-label">Generated Time</span>
                         <span class="info-value">"""
 
     now = get_beijing_time()
@@ -2137,7 +2137,7 @@ def render_html_content(
     if report_data["failed_ids"]:
         html += """
                 <div class="error-section">
-                    <div class="error-title">⚠️ Requestfailed的platform</div>
+                    <div class="error-title">⚠️ Failed Request Platforms</div>
                     <ul class="error-list">"""
         for id_value in report_data["failed_ids"]:
             html += f'<li class="error-item">{html_escape(id_value)}</li>'
@@ -2152,7 +2152,7 @@ def render_html_content(
         for i, stat in enumerate(report_data["stats"], 1):
             count = stat["count"]
 
-            # 确定热度等级
+            # Determine popularity level
             if count >= 10:
                 count_class = "hot"
             elif count >= 5:
@@ -2172,7 +2172,7 @@ def render_html_content(
                         <div class="word-index">{i}/{total_count}</div>
                     </div>"""
 
-            # Processing每个word group下的newstitle，给每itemsnews标上序号
+            # Process news titles under each word group, number each news item
             for j, title_data in enumerate(stat["titles"], 1):
                 is_new = title_data.get("is_new", False)
                 new_class = "new" if is_new else ""
@@ -2191,7 +2191,7 @@ def render_html_content(
                     max_rank = max(ranks)
                     rank_threshold = title_data.get("rank_threshold", 10)
 
-                    # 确定ranking等级
+                    # Determine ranking level
                     if min_rank <= 3:
                         rank_class = "top"
                     elif min_rank <= rank_threshold:
@@ -2209,7 +2209,7 @@ def render_html_content(
                 # Processingtimedisplay
                 time_display = title_data.get("time_display", "")
                 if time_display:
-                    # 简化timedisplay格式，将波浪线替换为~
+                    # Simplify time display format, replace wavy line with ~
                     simplified_time = (
                         time_display.replace(" ~ ", "~")
                         .replace("[", "")
@@ -2219,16 +2219,16 @@ def render_html_content(
                         f'<span class="time-info">{html_escape(simplified_time)}</span>'
                     )
 
-                # Processing出现count
+                # Process appearance count
                 count_info = title_data.get("count", 1)
                 if count_info > 1:
-                    html += f'<span class="count-info">{count_info}次</span>'
+                    html += f'<span class="count-info">{count_info} times</span>'
 
                 html += """
                             </div>
                             <div class="news-title">"""
 
-                # Processingtitle和链接
+                # Process title and links
                 escaped_title = html_escape(title_data["title"])
                 link_url = title_data.get("mobile_url") or title_data.get("url", "")
 
@@ -2246,11 +2246,11 @@ def render_html_content(
             html += """
                 </div>"""
 
-    # ProcessingNew news区域
+    # Process new news section
     if report_data["new_titles"]:
         html += f"""
                 <div class="new-section">
-                    <div class="new-section-title">本次New热点 (共 {report_data['total_new_count']} items)</div>"""
+                    <div class="new-section-title">New Trending Topics (Total {report_data['total_new_count']} items)</div>"""
 
         for source_data in report_data["new_titles"]:
             escaped_source = html_escape(source_data["source_name"])
@@ -2264,7 +2264,7 @@ def render_html_content(
             for idx, title_data in enumerate(source_data["titles"], 1):
                 ranks = title_data.get("ranks", [])
 
-                # ProcessingNew news的rankingdisplay
+                # Process new news ranking display
                 rank_class = ""
                 if ranks:
                     min_rank = min(ranks)
@@ -2287,7 +2287,7 @@ def render_html_content(
                             <div class="new-item-content">
                                 <div class="new-item-title">"""
 
-                # ProcessingNew news的链接
+                # Process new news links
                 escaped_title = html_escape(title_data["title"])
                 link_url = title_data.get("mobile_url") or title_data.get("url", "")
 
@@ -2313,9 +2313,9 @@ def render_html_content(
             
             <div class="footer">
                 <div class="footer-content">
-                    由 <span class="project-name">TrendRadar</span> 生成 · 
+                    Generated by <span class="project-name">TrendRadar</span> · 
                     <a href="https://github.com/sansan0/TrendRadar" target="_blank" class="footer-link">
-                        GitHub 开源项目
+                        GitHub Open Source Project
                     </a>"""
 
     if update_info:
@@ -2336,18 +2336,18 @@ def render_html_content(
                 const originalText = button.textContent;
                 
                 try {
-                    button.textContent = '生成中...';
+                    button.textContent = 'Generating...';
                     button.disabled = true;
                     window.scrollTo(0, 0);
                     
-                    // waiting页面稳定
+                    // Wait for page to stabilize
                     await new Promise(resolve => setTimeout(resolve, 200));
                     
-                    // 截图前隐藏按钮
+                    // Hide button before screenshot
                     const buttons = document.querySelector('.save-buttons');
                     buttons.style.visibility = 'hidden';
                     
-                    // 再次waiting确保按钮完全隐藏
+                    // Wait again to ensure button is fully hidden
                     await new Promise(resolve => setTimeout(resolve, 100));
                     
                     const container = document.querySelector('.container');
@@ -2375,12 +2375,12 @@ def render_html_content(
                     
                     const link = document.createElement('a');
                     const now = new Date();
-                    const filename = `TrendRadar_热点news分析_${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}.png`;
+                    const filename = `TrendRadar_Trending_News_Analysis_${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}.png`;
                     
                     link.download = filename;
                     link.href = canvas.toDataURL('image/png', 1.0);
                     
-                    // 触发download
+                    // Trigger download
                     document.body.appendChild(link);
                     link.click();
                     document.body.removeChild(link);
@@ -2410,10 +2410,10 @@ def render_html_content(
                 const maxHeight = 5000 / scale;
                 
                 try {
-                    button.textContent = '分析中...';
+                    button.textContent = 'Analyzing...';
                     button.disabled = true;
                     
-                    // FetchingAll可能的分割元素
+                    // Get all possible split elements
                     const newsItems = Array.from(container.querySelectorAll('.news-item'));
                     const wordGroups = Array.from(container.querySelectorAll('.word-group'));
                     const newSection = container.querySelector('.new-section');
@@ -2421,11 +2421,11 @@ def render_html_content(
                     const header = container.querySelector('.header');
                     const footer = container.querySelector('.footer');
                     
-                    // 计算元素position和high度
+                    // Calculate element position and height
                     const containerRect = container.getBoundingClientRect();
                     const elements = [];
                     
-                    // 添加header作为必须contains的元素
+                    // Add header as required element
                     elements.push({
                         type: 'header',
                         element: header,
@@ -2434,7 +2434,7 @@ def render_html_content(
                         height: header.offsetHeight
                     });
                     
-                    // 添加errorinformation（如果存在）
+                    // Add error information (if exists)
                     if (errorSection) {
                         const rect = errorSection.getBoundingClientRect();
                         elements.push({
@@ -2446,12 +2446,12 @@ def render_html_content(
                         });
                     }
                     
-                    // 按word-group分组Processingnews-item
+                    // Process news-item by word-group grouping
                     wordGroups.forEach(group => {
                         const groupRect = group.getBoundingClientRect();
                         const groupNewsItems = group.querySelectorAll('.news-item');
                         
-                        // 添加word-group的headerpartial
+                        // Add word-group header section
                         const wordHeader = group.querySelector('.word-header');
                         if (wordHeader) {
                             const headerRect = wordHeader.getBoundingClientRect();
@@ -2465,7 +2465,7 @@ def render_html_content(
                             });
                         }
                         
-                        // 添加每个news-item
+                        // Add each news-item
                         groupNewsItems.forEach(item => {
                             const rect = item.getBoundingClientRect();
                             elements.push({
@@ -2479,7 +2479,7 @@ def render_html_content(
                         });
                     });
                     
-                    // 添加New newspartial
+                    // Add new news section
                     if (newSection) {
                         const rect = newSection.getBoundingClientRect();
                         elements.push({
@@ -2491,7 +2491,7 @@ def render_html_content(
                         });
                     }
                     
-                    // 添加footer
+                    // Add footer
                     const footerRect = footer.getBoundingClientRect();
                     elements.push({
                         type: 'footer',
@@ -2501,7 +2501,7 @@ def render_html_content(
                         height: footer.offsetHeight
                     });
                     
-                    // 计算分割点
+                    // Calculate split points
                     const segments = [];
                     let currentSegment = { start: 0, end: 0, height: 0, includeHeader: true };
                     let headerHeight = header.offsetHeight;
@@ -2511,13 +2511,13 @@ def render_html_content(
                         const element = elements[i];
                         const potentialHeight = element.bottom - currentSegment.start;
                         
-                        // check是否需要create新分段
+                        // Check if need to create new segment
                         if (potentialHeight > maxHeight && currentSegment.height > headerHeight) {
-                            // 在前one元素结束处分割
+                            // Split at end of previous element
                             currentSegment.end = elements[i - 1].bottom;
                             segments.push(currentSegment);
                             
-                            // start新分段
+                            // Start new segment
                             currentSegment = {
                                 start: currentSegment.end,
                                 end: 0,
@@ -2530,15 +2530,15 @@ def render_html_content(
                         }
                     }
                     
-                    // 添加最后one分段
+                    // Add last segment
                     if (currentSegment.height > 0) {
                         currentSegment.end = container.offsetHeight;
                         segments.push(currentSegment);
                     }
                     
-                    button.textContent = `生成中 (0/${segments.length})...`;
+                    button.textContent = `Generating (0/${segments.length})...`;
                     
-                    // 隐藏save按钮
+                    // Hide save button
                     const buttons = document.querySelector('.save-buttons');
                     buttons.style.visibility = 'hidden';
                     
@@ -2546,9 +2546,9 @@ def render_html_content(
                     const images = [];
                     for (let i = 0; i < segments.length; i++) {
                         const segment = segments[i];
-                        button.textContent = `生成中 (${i + 1}/${segments.length})...`;
+                        button.textContent = `Generating (${i + 1}/${segments.length})...`;
                         
-                        // create临时容器用于截图
+                        // Create temporary container for screenshot
                         const tempContainer = document.createElement('div');
                         tempContainer.style.cssText = `
                             position: absolute;
@@ -2559,10 +2559,10 @@ def render_html_content(
                         `;
                         tempContainer.className = 'container';
                         
-                        // 克隆容器within容
+                        // Clone container content
                         const clonedContainer = container.cloneNode(true);
                         
-                        // 移除克隆within容中的save按钮
+                        // Remove save button from cloned content
                         const clonedButtons = clonedContainer.querySelector('.save-buttons');
                         if (clonedButtons) {
                             clonedButtons.style.display = 'none';
@@ -2571,10 +2571,10 @@ def render_html_content(
                         tempContainer.appendChild(clonedContainer);
                         document.body.appendChild(tempContainer);
                         
-                        // waitingDOM更新
+                        // Wait for DOM update
                         await new Promise(resolve => setTimeout(resolve, 100));
                         
-                        // usehtml2canvas截取特定区域
+                        // Use html2canvas to capture specific area
                         const canvas = await html2canvas(clonedContainer, {
                             backgroundColor: '#ffffff',
                             scale: scale,
@@ -2592,16 +2592,16 @@ def render_html_content(
                         
                         images.push(canvas.toDataURL('image/png', 1.0));
                         
-                        // 清理临时容器
+                        // Clean up temporary container
                         document.body.removeChild(tempContainer);
                     }
                     
-                    // 恢复按钮display
+                    // Restore button display
                     buttons.style.visibility = 'visible';
                     
-                    // downloadAll图片
+                    // Download all images
                     const now = new Date();
-                    const baseFilename = `TrendRadar_热点news分析_${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}`;
+                    const baseFilename = `TrendRadar_Trending_News_Analysis_${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}`;
                     
                     for (let i = 0; i < images.length; i++) {
                         const link = document.createElement('a');
@@ -2611,18 +2611,18 @@ def render_html_content(
                         link.click();
                         document.body.removeChild(link);
                         
-                        // 延迟一下避免浏览器阻止多个download
+                        // Delay to avoid browser blocking multiple downloads
                         await new Promise(resolve => setTimeout(resolve, 100));
                     }
                     
-                    button.textContent = `已save ${segments.length} 张图片!`;
+                    button.textContent = `Saved ${segments.length} images!`;
                     setTimeout(() => {
                         button.textContent = originalText;
                         button.disabled = false;
                     }, 2000);
                     
                 } catch (error) {
-                    console.error('分段savefailed:', error);
+                    console.error('Segmented save failed:', error);
                     const buttons = document.querySelector('.save-buttons');
                     buttons.style.visibility = 'visible';
                     button.textContent = 'savefailed';
@@ -2647,11 +2647,11 @@ def render_html_content(
 def render_feishu_content(
     report_data: Dict, update_info: Optional[Dict] = None, mode: str = "daily"
 ) -> str:
-    """渲染Feishuwithin容"""
+    """Render Feishu content"""
     text_content = ""
 
     if report_data["stats"]:
-        text_content += f"📊 **热点词汇statistics**\n\n"
+        text_content += f"📊 **Trending Keywords Statistics**\n\n"
 
     total_count = len(report_data["stats"])
 
@@ -2682,19 +2682,19 @@ def render_feishu_content(
 
     if not text_content:
         if mode == "incremental":
-            mode_text = "incrementalmode下暂无Newmatch的热点词汇"
+            mode_text = "No new matching trending keywords in incremental mode"
         elif mode == "current":
-            mode_text = "current榜单mode下暂无match的热点词汇"
+            mode_text = "No matching trending keywords in current ranking mode"
         else:
-            mode_text = "暂无match的热点词汇"
+            mode_text = "No matching trending keywords"
         text_content = f"📭 {mode_text}\n\n"
 
     if report_data["new_titles"]:
-        if text_content and "暂无match" not in text_content:
+        if text_content and "No matching" not in text_content:
             text_content += f"\n{CONFIG['FEISHU_MESSAGE_SEPARATOR']}\n\n"
 
         text_content += (
-            f"🆕 **本次New热点news** (共 {report_data['total_new_count']} items)\n\n"
+            f"🆕 **New Trending News** (Total {report_data['total_new_count']} items)\n\n"
         )
 
         for source_data in report_data["new_titles"]:
@@ -2713,10 +2713,10 @@ def render_feishu_content(
             text_content += "\n"
 
     if report_data["failed_ids"]:
-        if text_content and "暂无match" not in text_content:
+        if text_content and "No matching" not in text_content:
             text_content += f"\n{CONFIG['FEISHU_MESSAGE_SEPARATOR']}\n\n"
 
-        text_content += "⚠️ **dataFetchingfailed的platform：**\n\n"
+        text_content += "⚠️ **Failed to fetch data from platforms:**\n\n"
         for i, id_value in enumerate(report_data["failed_ids"], 1):
             text_content += f"  • <font color='red'>{id_value}</font>\n"
 
@@ -2734,7 +2734,7 @@ def render_feishu_content(
 def render_dingtalk_content(
     report_data: Dict, update_info: Optional[Dict] = None, mode: str = "daily"
 ) -> str:
-    """渲染DingTalkwithin容"""
+    """Render DingTalk content"""
     text_content = ""
 
     total_titles = sum(
@@ -2742,14 +2742,14 @@ def render_dingtalk_content(
     )
     now = get_beijing_time()
 
-    text_content += f"**totalnews数：** {total_titles}\n\n"
+    text_content += f"**Total news:** {total_titles}\n\n"
     text_content += f"**time：** {now.strftime('%Y-%m-%d %H:%M:%S')}\n\n"
-    text_content += f"**type：** 热点分析report\n\n"
+    text_content += f"**Type:** Trending Analysis Report\n\n"
 
     text_content += "---\n\n"
 
     if report_data["stats"]:
-        text_content += f"📊 **热点词汇statistics**\n\n"
+        text_content += f"📊 **Trending Keywords Statistics**\n\n"
 
         total_count = len(report_data["stats"])
 
@@ -2780,19 +2780,19 @@ def render_dingtalk_content(
 
     if not report_data["stats"]:
         if mode == "incremental":
-            mode_text = "incrementalmode下暂无Newmatch的热点词汇"
+            mode_text = "No new matching trending keywords in incremental mode"
         elif mode == "current":
-            mode_text = "current榜单mode下暂无match的热点词汇"
+            mode_text = "No matching trending keywords in current ranking mode"
         else:
-            mode_text = "暂无match的热点词汇"
+            mode_text = "No matching trending keywords"
         text_content += f"📭 {mode_text}\n\n"
 
     if report_data["new_titles"]:
-        if text_content and "暂无match" not in text_content:
+        if text_content and "No matching" not in text_content:
             text_content += f"\n---\n\n"
 
         text_content += (
-            f"🆕 **本次New热点news** (共 {report_data['total_new_count']} items)\n\n"
+            f"🆕 **New Trending News** (Total {report_data['total_new_count']} items)\n\n"
         )
 
         for source_data in report_data["new_titles"]:
@@ -2809,10 +2809,10 @@ def render_dingtalk_content(
             text_content += "\n"
 
     if report_data["failed_ids"]:
-        if text_content and "暂无match" not in text_content:
+        if text_content and "No matching" not in text_content:
             text_content += f"\n---\n\n"
 
-        text_content += "⚠️ **dataFetchingfailed的platform：**\n\n"
+        text_content += "⚠️ **Failed to fetch data from platforms:**\n\n"
         for i, id_value in enumerate(report_data["failed_ids"], 1):
             text_content += f"  • **{id_value}**\n"
 
@@ -2831,7 +2831,7 @@ def split_content_into_batches(
     max_bytes: int = None,
     mode: str = "daily",
 ) -> List[str]:
-    """分batchProcessing消息within容，确保word grouptitle+至少#Completeness of a news item"""
+    """Process message content in batches, ensure word group title + at least one complete news item"""
     if max_bytes is None:
         if format_type == "dingtalk":
             max_bytes = CONFIG.get("DINGTALK_BATCH_SIZE", 20000)
@@ -2851,17 +2851,17 @@ def split_content_into_batches(
 
     base_header = ""
     if format_type == "wework":
-        base_header = f"**totalnews数：** {total_titles}\n\n\n\n"
+        base_header = f"**Total news:** {total_titles}\n\n\n\n"
     elif format_type == "telegram":
-        base_header = f"totalnews数： {total_titles}\n\n"
+        base_header = f"Total news: {total_titles}\n\n"
     elif format_type == "ntfy":
-        base_header = f"**totalnews数：** {total_titles}\n\n"
+        base_header = f"**Total news:** {total_titles}\n\n"
     elif format_type == "feishu":
         base_header = ""
     elif format_type == "dingtalk":
-        base_header = f"**totalnews数：** {total_titles}\n\n"
+        base_header = f"**Total news:** {total_titles}\n\n"
         base_header += f"**time：** {now.strftime('%Y-%m-%d %H:%M:%S')}\n\n"
-        base_header += f"**type：** 热点分析report\n\n"
+        base_header += f"**Type:** Trending Analysis Report\n\n"
         base_header += "---\n\n"
 
     base_footer = ""
@@ -2889,15 +2889,15 @@ def split_content_into_batches(
     stats_header = ""
     if report_data["stats"]:
         if format_type == "wework":
-            stats_header = f"📊 **热点词汇statistics**\n\n"
+            stats_header = f"📊 **Trending Keywords Statistics**\n\n"
         elif format_type == "telegram":
-            stats_header = f"📊 热点词汇statistics\n\n"
+            stats_header = f"📊 Trending Keywords Statistics\n\n"
         elif format_type == "ntfy":
-            stats_header = f"📊 **热点词汇statistics**\n\n"
+            stats_header = f"📊 **Trending Keywords Statistics**\n\n"
         elif format_type == "feishu":
-            stats_header = f"📊 **热点词汇statistics**\n\n"
+            stats_header = f"📊 **Trending Keywords Statistics**\n\n"
         elif format_type == "dingtalk":
-            stats_header = f"📊 **热点词汇statistics**\n\n"
+            stats_header = f"📊 **Trending Keywords Statistics**\n\n"
 
     current_batch = base_header
     current_batch_has_content = False
@@ -2908,21 +2908,21 @@ def split_content_into_batches(
         and not report_data["failed_ids"]
     ):
         if mode == "incremental":
-            mode_text = "incrementalmode下暂无Newmatch的热点词汇"
+            mode_text = "No new matching trending keywords in incremental mode"
         elif mode == "current":
-            mode_text = "current榜单mode下暂无match的热点词汇"
+            mode_text = "No matching trending keywords in current ranking mode"
         else:
-            mode_text = "暂无match的热点词汇"
+            mode_text = "No matching trending keywords"
         simple_content = f"📭 {mode_text}\n\n"
         final_content = base_header + simple_content + base_footer
         batches.append(final_content)
         return batches
 
-    # Processing热点词汇statistics
+    # Process trending keywords statistics
     if report_data["stats"]:
         total_count = len(report_data["stats"])
 
-        # 添加statisticstitle
+        # Add statistics title
         test_content = current_batch + stats_header
         if (
             len(test_content.encode("utf-8")) + len(base_footer.encode("utf-8"))
@@ -2936,13 +2936,13 @@ def split_content_into_batches(
             current_batch = base_header + stats_header
             current_batch_has_content = True
 
-        # 逐个Processingword group（确保word grouptitle+#Atomicity of a news item）
+        # Process word group one by one (ensure word group title + one atomic news item)
         for i, stat in enumerate(report_data["stats"]):
             word = stat["word"]
             count = stat["count"]
             sequence_display = f"[{i + 1}/{total_count}]"
 
-            # 构建word grouptitle
+            # Build word group title
             word_header = ""
             if format_type == "wework":
                 if count >= 10:
@@ -2992,7 +2992,7 @@ def split_content_into_batches(
                 else:
                     word_header = f"📌 {sequence_display} **{word}** : {count} items\n\n"
 
-            # 构建#one news item
+            # Build one news item
             first_news_line = ""
             if stat["titles"]:
                 first_title_data = stat["titles"][0]
@@ -3031,7 +3031,7 @@ def split_content_into_batches(
                 len(test_content.encode("utf-8")) + len(base_footer.encode("utf-8"))
                 >= max_bytes
             ):
-                # currentbatch次容纳not下，开启新batch次
+                # Current batch cannot accommodate, start new batch
                 if current_batch_has_content:
                     batches.append(current_batch + base_footer)
                 current_batch = base_header + stats_header + word_with_first_news
@@ -3042,7 +3042,7 @@ def split_content_into_batches(
                 current_batch_has_content = True
                 start_index = 1
 
-            # Processing剩余newsitems目
+            # Process remaining news items
             for j in range(start_index, len(stat["titles"])):
                 title_data = stat["titles"][j]
                 if format_type == "wework":
@@ -3085,7 +3085,7 @@ def split_content_into_batches(
                     current_batch = test_content
                     current_batch_has_content = True
 
-            # word group间分隔符
+            # Separator between word groups
             if i < len(report_data["stats"]) - 1:
                 separator = ""
                 if format_type == "wework":
@@ -3106,21 +3106,21 @@ def split_content_into_batches(
                 ):
                     current_batch = test_content
 
-    # ProcessingNew news（同样确保Source title+#Atomicity of a news item）
+    # Process new news (also ensure source title + one atomic news item)
     if report_data["new_titles"]:
         new_header = ""
         if format_type == "wework":
-            new_header = f"\n\n\n\n🆕 **本次New热点news** (共 {report_data['total_new_count']} items)\n\n"
+            new_header = f"\n\n\n\n🆕 **New Trending News** (Total {report_data['total_new_count']} items)\n\n"
         elif format_type == "telegram":
             new_header = (
-                f"\n\n🆕 本次New热点news (共 {report_data['total_new_count']} items)\n\n"
+                f"\n\n🆕 New Trending News (Total {report_data['total_new_count']} items)\n\n"
             )
         elif format_type == "ntfy":
-            new_header = f"\n\n🆕 **本次New热点news** (共 {report_data['total_new_count']} items)\n\n"
+            new_header = f"\n\n🆕 **New Trending News** (Total {report_data['total_new_count']} items)\n\n"
         elif format_type == "feishu":
-            new_header = f"\n{CONFIG['FEISHU_MESSAGE_SEPARATOR']}\n\n🆕 **本次New热点news** (共 {report_data['total_new_count']} items)\n\n"
+            new_header = f"\n{CONFIG['FEISHU_MESSAGE_SEPARATOR']}\n\n🆕 **New Trending News** (Total {report_data['total_new_count']} items)\n\n"
         elif format_type == "dingtalk":
-            new_header = f"\n---\n\n🆕 **本次New热点news** (共 {report_data['total_new_count']} items)\n\n"
+            new_header = f"\n---\n\n🆕 **New Trending News** (Total {report_data['total_new_count']} items)\n\n"
 
         test_content = current_batch + new_header
         if (
@@ -3135,7 +3135,7 @@ def split_content_into_batches(
             current_batch = test_content
             current_batch_has_content = True
 
-        # 逐个ProcessingNew newssource
+        # Process new news source one by one
         for source_data in report_data["new_titles"]:
             source_header = ""
             if format_type == "wework":
@@ -3149,7 +3149,7 @@ def split_content_into_batches(
             elif format_type == "dingtalk":
                 source_header = f"**{source_data['source_name']}** ({len(source_data['titles'])} items):\n\n"
 
-            # 构建#one new news item
+            # Build one new news item
             first_news_line = ""
             if source_data["titles"]:
                 first_title_data = source_data["titles"][0]
@@ -3195,7 +3195,7 @@ def split_content_into_batches(
                 current_batch_has_content = True
                 start_index = 1
 
-            # Processing剩余New news
+            # Process remaining new news
             for j in range(start_index, len(source_data["titles"])):
                 title_data = source_data["titles"][j]
                 title_data_copy = title_data.copy()
@@ -3240,15 +3240,15 @@ def split_content_into_batches(
     if report_data["failed_ids"]:
         failed_header = ""
         if format_type == "wework":
-            failed_header = f"\n\n\n\n⚠️ **dataFetchingfailed的platform：**\n\n"
+            failed_header = f"\n\n\n\n⚠️ **Failed to fetch data from platforms:**\n\n"
         elif format_type == "telegram":
-            failed_header = f"\n\n⚠️ dataFetchingfailed的platform：\n\n"
+            failed_header = f"\n\n⚠️ Failed to fetch data from platforms:\n\n"
         elif format_type == "ntfy":
-            failed_header = f"\n\n⚠️ **dataFetchingfailed的platform：**\n\n"
+            failed_header = f"\n\n⚠️ **Failed to fetch data from platforms:**\n\n"
         elif format_type == "feishu":
-            failed_header = f"\n{CONFIG['FEISHU_MESSAGE_SEPARATOR']}\n\n⚠️ **dataFetchingfailed的platform：**\n\n"
+            failed_header = f"\n{CONFIG['FEISHU_MESSAGE_SEPARATOR']}\n\n⚠️ **Failed to fetch data from platforms:**\n\n"
         elif format_type == "dingtalk":
-            failed_header = f"\n---\n\n⚠️ **dataFetchingfailed的platform：**\n\n"
+            failed_header = f"\n---\n\n⚠️ **Failed to fetch data from platforms:**\n\n"
 
         test_content = current_batch + failed_header
         if (
@@ -3302,7 +3302,7 @@ def send_to_notifications(
     mode: str = "daily",
     html_file_path: Optional[str] = None,
 ) -> Dict[str, bool]:
-    """Sendingdata到多个通知platform"""
+    """Send data to multiple notification platforms"""
     results = {}
 
     if CONFIG["PUSH_WINDOW"]["ENABLED"]:
@@ -3313,7 +3313,7 @@ def send_to_notifications(
         if not push_manager.is_in_time_range(time_range_start, time_range_end):
             now = get_beijing_time()
             print(
-                f"pushwindow控制：currenttime {now.strftime('%H:%M')} notWithin push timewindow {time_range_start}-{time_range_end} within，Skippush"
+                f"Push window control: current time {now.strftime('%H:%M')} not within push time window {time_range_start}-{time_range_end}, skip push"
             )
             return results
 
@@ -3342,25 +3342,25 @@ def send_to_notifications(
 
     update_info_to_send = update_info if CONFIG["SHOW_VERSION_UPDATE"] else None
 
-    # Sending到Feishu
+    # Send to Feishu
     if feishu_url:
         results["feishu"] = send_to_feishu(
             feishu_url, report_data, report_type, update_info_to_send, proxy_url, mode
         )
 
-    # Sending到DingTalk
+    # Send to DingTalk
     if dingtalk_url:
         results["dingtalk"] = send_to_dingtalk(
             dingtalk_url, report_data, report_type, update_info_to_send, proxy_url, mode
         )
 
-    # Sending到WeWork
+    # Send to WeWork
     if wework_url:
         results["wework"] = send_to_wework(
             wework_url, report_data, report_type, update_info_to_send, proxy_url, mode
         )
 
-    # Sending到 Telegram
+    # Send to Telegram
     if telegram_token and telegram_chat_id:
         results["telegram"] = send_to_telegram(
             telegram_token,
@@ -3372,7 +3372,7 @@ def send_to_notifications(
             mode,
         )
 
-    # Sending到 ntfy
+    # Send to ntfy
     if ntfy_server_url and ntfy_topic:
         results["ntfy"] = send_to_ntfy(
             ntfy_server_url,
@@ -3385,7 +3385,7 @@ def send_to_notifications(
             mode,
         )
 
-    # Sending邮件
+    # Send email
     if email_from and email_password and email_to:
         results["email"] = send_to_email(
             email_from,
@@ -3398,9 +3398,9 @@ def send_to_notifications(
         )
 
     if not results:
-        print("No notification channels configured，Skip通知Sending")
+        print("No notification channels configured, skip notification sending")
 
-    # 如果successSendingany notification，and once-per-day push enabled，则Record push
+    # If successfully sent any notification and once-per-day push enabled, record push
     if (
         CONFIG["PUSH_WINDOW"]["ENABLED"]
         and CONFIG["PUSH_WINDOW"]["ONCE_PER_DAY"]
@@ -3420,13 +3420,13 @@ def send_to_feishu(
     proxy_url: Optional[str] = None,
     mode: str = "daily",
 ) -> bool:
-    """Sending到Feishu（支持分batchSending）"""
+    """Send to Feishu (supports batch sending)"""
     headers = {"Content-Type": "application/json"}
     proxies = None
     if proxy_url:
         proxies = {"http": proxy_url, "https": proxy_url}
 
-    # Fetching分batchwithin容，useFeishuDedicated batch size
+    # Get batch content, use Feishu dedicated batch size
     batches = split_content_into_batches(
         report_data,
         "feishu",
@@ -3435,22 +3435,22 @@ def send_to_feishu(
         mode=mode,
     )
 
-    print(f"FeishuMessage split into {len(batches)} batch sending [{report_type}]")
+    print(f"Feishu message split into {len(batches)} batches for sending [{report_type}]")
 
-    # 逐batchSending
+    # Send batch by batch
     for i, batch_content in enumerate(batches, 1):
         batch_size = len(batch_content.encode("utf-8"))
         print(
-            f"SendingFeishu# {i}/{len(batches)} batch次，大小：{batch_size}  bytes [{report_type}]"
+            f"Sending Feishu batch {i}/{len(batches)}, size: {batch_size} bytes [{report_type}]"
         )
 
-        # 添加batch identifier
+        # Add batch identifier
         if len(batches) > 1:
-            batch_header = f"**[# {i}/{len(batches)} batch次]**\n\n"
-            # 将batch identifier插入到适当position（After statistics title）
-            if "📊 **热点词汇statistics**" in batch_content:
+            batch_header = f"**[Batch {i}/{len(batches)}]**\n\n"
+            # Insert batch identifier at appropriate position (after statistics title)
+            if "📊 **Trending Keywords Statistics**" in batch_content:
                 batch_content = batch_content.replace(
-                    "📊 **热点词汇statistics**\n\n", f"📊 **热点词汇statistics** {batch_header}"
+                    "📊 **Trending Keywords Statistics**\n\n", f"📊 **Trending Keywords Statistics** {batch_header}"
                 )
             else:
                 # If no statistics title，Add directly at beginning
@@ -3477,28 +3477,28 @@ def send_to_feishu(
             )
             if response.status_code == 200:
                 result = response.json()
-                # checkFeishu的响应status
+                # Check Feishu response status
                 if result.get("StatusCode") == 0 or result.get("code") == 0:
-                    print(f"Feishu# {i}/{len(batches)} batch sendingsuccess [{report_type}]")
-                    # batch次间间隔
+                    print(f"Feishu batch {i}/{len(batches)} sent successfully [{report_type}]")
+                    # Interval between batches
                     if i < len(batches):
                         time.sleep(CONFIG["BATCH_SEND_INTERVAL"])
                 else:
-                    error_msg = result.get("msg") or result.get("StatusMessage", "未知error")
+                    error_msg = result.get("msg") or result.get("StatusMessage", "unknown error")
                     print(
-                        f"Feishu# {i}/{len(batches)} batch sendingfailed [{report_type}]，error：{error_msg}"
+                        f"Feishu batch {i}/{len(batches)} sending failed [{report_type}], error: {error_msg}"
                     )
                     return False
             else:
                 print(
-                    f"Feishu# {i}/{len(batches)} batch sendingfailed [{report_type}]，status码：{response.status_code}"
+                    f"Feishu batch {i}/{len(batches)} sending failed [{report_type}], status code: {response.status_code}"
                 )
                 return False
         except Exception as e:
-            print(f"Feishu# {i}/{len(batches)} batch sending出错 [{report_type}]：{e}")
+            print(f"Feishu batch {i}/{len(batches)} sending error [{report_type}]: {e}")
             return False
 
-    print(f"FeishuAll {len(batches)} batch sendingcompleted [{report_type}]")
+    print(f"Feishu all {len(batches)} batches sent successfully [{report_type}]")
     return True
 
 
@@ -3510,13 +3510,13 @@ def send_to_dingtalk(
     proxy_url: Optional[str] = None,
     mode: str = "daily",
 ) -> bool:
-    """Sending到DingTalk（支持分batchSending）"""
+    """Send to DingTalk (supports batch sending)"""
     headers = {"Content-Type": "application/json"}
     proxies = None
     if proxy_url:
         proxies = {"http": proxy_url, "https": proxy_url}
 
-    # Fetching分batchwithin容，useDingTalkDedicated batch size
+    # Get batch content, use DingTalk dedicated batch size
     batches = split_content_into_batches(
         report_data,
         "dingtalk",
@@ -3525,22 +3525,22 @@ def send_to_dingtalk(
         mode=mode,
     )
 
-    print(f"DingTalkMessage split into {len(batches)} batch sending [{report_type}]")
+    print(f"DingTalk message split into {len(batches)} batches for sending [{report_type}]")
 
-    # 逐batchSending
+    # Send batch by batch
     for i, batch_content in enumerate(batches, 1):
         batch_size = len(batch_content.encode("utf-8"))
         print(
-            f"SendingDingTalk# {i}/{len(batches)} batch次，大小：{batch_size}  bytes [{report_type}]"
+            f"Sending DingTalk batch {i}/{len(batches)}, size: {batch_size} bytes [{report_type}]"
         )
 
-        # 添加batch identifier
+        # Add batch identifier
         if len(batches) > 1:
-            batch_header = f"**[# {i}/{len(batches)} batch次]**\n\n"
-            # 将batch identifier插入到适当position（在title之后）
-            if "📊 **热点词汇statistics**" in batch_content:
+            batch_header = f"**[Batch {i}/{len(batches)}]**\n\n"
+            # Insert batch identifier at appropriate position (after title)
+            if "📊 **Trending Keywords Statistics**" in batch_content:
                 batch_content = batch_content.replace(
-                    "📊 **热点词汇statistics**\n\n", f"📊 **热点词汇statistics** {batch_header}\n\n"
+                    "📊 **Trending Keywords Statistics**\n\n", f"📊 **Trending Keywords Statistics** {batch_header}\n\n"
                 )
             else:
                 # If no statistics title，Add directly at beginning
@@ -3549,7 +3549,7 @@ def send_to_dingtalk(
         payload = {
             "msgtype": "markdown",
             "markdown": {
-                "title": f"TrendRadar 热点分析report - {report_type}",
+                "title": f"TrendRadar Trending Analysis Report - {report_type}",
                 "text": batch_content,
             },
         }
@@ -3561,25 +3561,25 @@ def send_to_dingtalk(
             if response.status_code == 200:
                 result = response.json()
                 if result.get("errcode") == 0:
-                    print(f"DingTalk# {i}/{len(batches)} batch sendingsuccess [{report_type}]")
-                    # batch次间间隔
+                    print(f"DingTalk batch {i}/{len(batches)} sent successfully [{report_type}]")
+                    # Interval between batches
                     if i < len(batches):
                         time.sleep(CONFIG["BATCH_SEND_INTERVAL"])
                 else:
                     print(
-                        f"DingTalk# {i}/{len(batches)} batch sendingfailed [{report_type}]，error：{result.get('errmsg')}"
+                        f"DingTalk batch {i}/{len(batches)} sending failed [{report_type}], error: {result.get('errmsg')}"
                     )
                     return False
             else:
                 print(
-                    f"DingTalk# {i}/{len(batches)} batch sendingfailed [{report_type}]，status码：{response.status_code}"
+                    f"DingTalk batch {i}/{len(batches)} sending failed [{report_type}], status code: {response.status_code}"
                 )
                 return False
         except Exception as e:
-            print(f"DingTalk# {i}/{len(batches)} batch sending出错 [{report_type}]：{e}")
+            print(f"DingTalk batch {i}/{len(batches)} sending error [{report_type}]: {e}")
             return False
 
-    print(f"DingTalkAll {len(batches)} batch sendingcompleted [{report_type}]")
+    print(f"DingTalk all {len(batches)} batches sent successfully [{report_type}]")
     return True
 
 
@@ -3591,27 +3591,27 @@ def send_to_wework(
     proxy_url: Optional[str] = None,
     mode: str = "daily",
 ) -> bool:
-    """Sending到WeWork（支持分batchSending）"""
+    """Send to WeWork (supports batch sending)"""
     headers = {"Content-Type": "application/json"}
     proxies = None
     if proxy_url:
         proxies = {"http": proxy_url, "https": proxy_url}
 
-    # Fetching分batchwithin容
+    # Get batch content
     batches = split_content_into_batches(report_data, "wework", update_info, mode=mode)
 
-    print(f"WeWorkMessage split into {len(batches)} batch sending [{report_type}]")
+    print(f"WeWork message split into {len(batches)} batches for sending [{report_type}]")
 
-    # 逐batchSending
+    # Send batch by batch
     for i, batch_content in enumerate(batches, 1):
         batch_size = len(batch_content.encode("utf-8"))
         print(
-            f"SendingWeWork# {i}/{len(batches)} batch次，大小：{batch_size}  bytes [{report_type}]"
+            f"Sending WeWork batch {i}/{len(batches)}, size: {batch_size} bytes [{report_type}]"
         )
 
-        # 添加batch identifier
+        # Add batch identifier
         if len(batches) > 1:
-            batch_header = f"**[# {i}/{len(batches)} batch次]**\n\n"
+            batch_header = f"**[Batch {i}/{len(batches)}]**\n\n"
             batch_content = batch_header + batch_content
 
         payload = {"msgtype": "markdown", "markdown": {"content": batch_content}}
@@ -3623,25 +3623,25 @@ def send_to_wework(
             if response.status_code == 200:
                 result = response.json()
                 if result.get("errcode") == 0:
-                    print(f"WeWork# {i}/{len(batches)} batch sendingsuccess [{report_type}]")
-                    # batch次间间隔
+                    print(f"WeWork batch {i}/{len(batches)} sent successfully [{report_type}]")
+                    # Interval between batches
                     if i < len(batches):
                         time.sleep(CONFIG["BATCH_SEND_INTERVAL"])
                 else:
                     print(
-                        f"WeWork# {i}/{len(batches)} batch sendingfailed [{report_type}]，error：{result.get('errmsg')}"
+                        f"WeWork batch {i}/{len(batches)} sending failed [{report_type}], error: {result.get('errmsg')}"
                     )
                     return False
             else:
                 print(
-                    f"WeWork# {i}/{len(batches)} batch sendingfailed [{report_type}]，status码：{response.status_code}"
+                    f"WeWork batch {i}/{len(batches)} sending failed [{report_type}], status code: {response.status_code}"
                 )
                 return False
         except Exception as e:
-            print(f"WeWork# {i}/{len(batches)} batch sending出错 [{report_type}]：{e}")
+            print(f"WeWork batch {i}/{len(batches)} sending error [{report_type}]: {e}")
             return False
 
-    print(f"WeWorkAll {len(batches)} batch sendingcompleted [{report_type}]")
+    print(f"WeWork all {len(batches)} batches sent successfully [{report_type}]")
     return True
 
 
@@ -3654,7 +3654,7 @@ def send_to_telegram(
     proxy_url: Optional[str] = None,
     mode: str = "daily",
 ) -> bool:
-    """Sending到Telegram（支持分batchSending）"""
+    """Send to Telegram (supports batch sending)"""
     headers = {"Content-Type": "application/json"}
     url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
 
@@ -3662,23 +3662,23 @@ def send_to_telegram(
     if proxy_url:
         proxies = {"http": proxy_url, "https": proxy_url}
 
-    # Fetching分batchwithin容
+    # Get batch content
     batches = split_content_into_batches(
         report_data, "telegram", update_info, mode=mode
     )
 
-    print(f"TelegramMessage split into {len(batches)} batch sending [{report_type}]")
+    print(f"Telegram message split into {len(batches)} batches for sending [{report_type}]")
 
-    # 逐batchSending
+    # Send batch by batch
     for i, batch_content in enumerate(batches, 1):
         batch_size = len(batch_content.encode("utf-8"))
         print(
-            f"SendingTelegram# {i}/{len(batches)} batch次，大小：{batch_size}  bytes [{report_type}]"
+            f"Sending Telegram batch {i}/{len(batches)}, size: {batch_size} bytes [{report_type}]"
         )
 
-        # 添加batch identifier
+        # Add batch identifier
         if len(batches) > 1:
-            batch_header = f"<b>[# {i}/{len(batches)} batch次]</b>\n\n"
+            batch_header = f"<b>[Batch {i}/{len(batches)}]</b>\n\n"
             batch_content = batch_header + batch_content
 
         payload = {
@@ -3695,25 +3695,25 @@ def send_to_telegram(
             if response.status_code == 200:
                 result = response.json()
                 if result.get("ok"):
-                    print(f"Telegram# {i}/{len(batches)} batch sendingsuccess [{report_type}]")
-                    # batch次间间隔
+                    print(f"Telegram batch {i}/{len(batches)} sent successfully [{report_type}]")
+                    # Interval between batches
                     if i < len(batches):
                         time.sleep(CONFIG["BATCH_SEND_INTERVAL"])
                 else:
                     print(
-                        f"Telegram# {i}/{len(batches)} batch sendingfailed [{report_type}]，error：{result.get('description')}"
+                        f"Telegram batch {i}/{len(batches)} sending failed [{report_type}], error: {result.get('description')}"
                     )
                     return False
             else:
                 print(
-                    f"Telegram# {i}/{len(batches)} batch sendingfailed [{report_type}]，status码：{response.status_code}"
+                    f"Telegram batch {i}/{len(batches)} sending failed [{report_type}], status code: {response.status_code}"
                 )
                 return False
         except Exception as e:
-            print(f"Telegram# {i}/{len(batches)} batch sending出错 [{report_type}]：{e}")
+            print(f"Telegram batch {i}/{len(batches)} sending error [{report_type}]: {e}")
             return False
 
-    print(f"TelegramAll {len(batches)} batch sendingcompleted [{report_type}]")
+    print(f"Telegram all {len(batches)} batches sent successfully [{report_type}]")
     return True
 
 
@@ -3726,10 +3726,10 @@ def send_to_email(
     custom_smtp_server: Optional[str] = None,
     custom_smtp_port: Optional[int] = None,
 ) -> bool:
-    """Sending邮件通知"""
+    """Send email notification"""
     try:
         if not html_file_path or not Path(html_file_path).exists():
-            print(f"error：HTML文件does not exist或未提供: {html_file_path}")
+            print(f"Error: HTML file does not exist or not provided: {html_file_path}")
             return False
 
         print(f"Using HTML file: {html_file_path}")
@@ -3739,60 +3739,60 @@ def send_to_email(
         domain = from_email.split("@")[-1].lower()
 
         if custom_smtp_server and custom_smtp_port:
-            # use自定义 SMTP configuration
+            # Use custom SMTP configuration
             smtp_server = custom_smtp_server
             smtp_port = int(custom_smtp_port)
-            # 根据端口determine加密方式：465=SSL, 587=TLS
+            # Determine encryption method based on port: 465=SSL, 587=TLS
             if smtp_port == 465:
                 use_tls = False  # SSL mode（SMTP_SSL）
             elif smtp_port == 587:
                 use_tls = True   # TLS mode（STARTTLS）
             else:
-                # 其他端口优先尝试 TLS（更安全，更广泛支持）
+                # For other ports, try TLS first (more secure, more widely supported)
                 use_tls = True
         elif domain in SMTP_CONFIGS:
-            # use预设configuration
+            # Use preset configuration
             config = SMTP_CONFIGS[domain]
             smtp_server = config["server"]
             smtp_port = config["port"]
             use_tls = config["encryption"] == "TLS"
         else:
-            print(f"Unrecognized email provider: {domain}，using generic SMTP configuration")
+            print(f"Unrecognized email provider: {domain}, using generic SMTP configuration")
             smtp_server = f"smtp.{domain}"
             smtp_port = 587
             use_tls = True
 
         msg = MIMEMultipart("alternative")
 
-        # Strictly follow RFC 标准settings From header
+        # Strictly follow RFC standard for setting From header
         sender_name = "TrendRadar"
         msg["From"] = formataddr((sender_name, from_email))
 
-        # settings收件人
+        # Set recipient
         recipients = [addr.strip() for addr in to_email.split(",")]
         if len(recipients) == 1:
             msg["To"] = recipients[0]
         else:
             msg["To"] = ", ".join(recipients)
 
-        # settings邮件主题
+        # Set email subject
         now = get_beijing_time()
-        subject = f"TrendRadar 热点分析report - {report_type} - {now.strftime('%m月%d日 %H:%M')}"
+        subject = f"TrendRadar Trending Analysis Report - {report_type} - {now.strftime('%m-%d %H:%M')}"
         msg["Subject"] = Header(subject, "utf-8")
 
-        # settings其他标准 header
+        # Set other standard headers
         msg["MIME-Version"] = "1.0"
         msg["Date"] = formatdate(localtime=True)
         msg["Message-ID"] = make_msgid()
 
-        # 添加纯文本partial（作为备选）
+        # Add plain text part (as fallback)
         text_content = f"""
-TrendRadar 热点分析report
-========================
-reporttype：{report_type}
-生成time：{now.strftime('%Y-%m-%d %H:%M:%S')}
+TrendRadar Trending Analysis Report
+====================================
+Report Type: {report_type}
+Generated Time: {now.strftime('%Y-%m-%d %H:%M:%S')}
 
-请use支持HTML的邮件客户端查看completereportwithin容。
+Please use an HTML-compatible email client to view the complete report content.
         """
         text_part = MIMEText(text_content, "plain", "utf-8")
         msg.attach(text_part)
@@ -3800,7 +3800,7 @@ reporttype：{report_type}
         html_part = MIMEText(html_content, "html", "utf-8")
         msg.attach(html_part)
 
-        print(f"正在Sending邮件到 {to_email}...")
+        print(f"Sending email to {to_email}...")
         print(f"SMTP server: {smtp_server}:{smtp_port}")
         print(f"Sender: {from_email}")
 
@@ -3808,7 +3808,7 @@ reporttype：{report_type}
             if use_tls:
                 # TLS mode
                 server = smtplib.SMTP(smtp_server, smtp_port, timeout=30)
-                server.set_debuglevel(0)  # 设为1可以查看detailed调试information
+                server.set_debuglevel(0)  # Set to 1 to view detailed debug information
                 server.ehlo()
                 server.starttls()
                 server.ehlo()
@@ -3818,39 +3818,39 @@ reporttype：{report_type}
                 server.set_debuglevel(0)
                 server.ehlo()
 
-            # 登录
+            # Login
             server.login(from_email, password)
 
-            # Sending邮件
+            # Send email
             server.send_message(msg)
             server.quit()
 
-            print(f"邮件Sendingsuccess [{report_type}] -> {to_email}")
+            print(f"Email sent successfully [{report_type}] -> {to_email}")
             return True
 
         except smtplib.SMTPServerDisconnected:
-            print(f"邮件Sendingfailed：Server disconnected unexpectedly, please check network or retry later")
+            print(f"Email sending failed: Server disconnected unexpectedly, please check network or retry later")
             return False
 
     except smtplib.SMTPAuthenticationError as e:
-        print(f"邮件Sendingfailed：Authentication error, please check email and password/authorization code")
+        print(f"Email sending failed: Authentication error, please check email and password/authorization code")
         print(f"Detailed error: {str(e)}")
         return False
     except smtplib.SMTPRecipientsRefused as e:
-        print(f"邮件Sendingfailed：Recipient address rejected {e}")
+        print(f"Email sending failed: Recipient address rejected {e}")
         return False
     except smtplib.SMTPSenderRefused as e:
-        print(f"邮件Sendingfailed：Sender地址被拒绝 {e}")
+        print(f"Email sending failed: Sender address rejected {e}")
         return False
     except smtplib.SMTPDataError as e:
-        print(f"邮件Sendingfailed：邮件dataerror {e}")
+        print(f"Email sending failed: Email data error {e}")
         return False
     except smtplib.SMTPConnectError as e:
-        print(f"邮件Sendingfailed：无法连接到 SMTP server {smtp_server}:{smtp_port}")
+        print(f"Email sending failed: Unable to connect to SMTP server {smtp_server}:{smtp_port}")
         print(f"Detailed error: {str(e)}")
         return False
     except Exception as e:
-        print(f"邮件Sendingfailed [{report_type}]：{e}")
+        print(f"Email sending failed [{report_type}]: {e}")
         import traceback
 
         traceback.print_exc()
@@ -3867,8 +3867,8 @@ def send_to_ntfy(
     proxy_url: Optional[str] = None,
     mode: str = "daily",
 ) -> bool:
-    """Sending到ntfy（支持分batchSending，Strictly comply with4KB限制）"""
-    # 避免 HTTP header 编码问题
+    """Send to ntfy (supports batch sending, strictly comply with 4KB limit)"""
+    # Avoid HTTP header encoding issues
     report_type_en_map = {
         "Daily Summary": "Daily Summary",
         "Current Rankings Summary": "Current Ranking",
@@ -3889,7 +3889,7 @@ def send_to_ntfy(
     if token:
         headers["Authorization"] = f"Bearer {token}"
     
-    # 构建completeURL，确保格式正确
+    # Build complete URL, ensure format is correct
     base_url = server_url.rstrip("/")
     if not base_url.startswith(("http://", "https://")):
         base_url = f"https://{base_url}"
@@ -3899,39 +3899,39 @@ def send_to_ntfy(
     if proxy_url:
         proxies = {"http": proxy_url, "https": proxy_url}
 
-    # Fetching分batchwithin容，usentfy专用的4KB限制
+    # Get batch content, use ntfy dedicated 4KB limit
     batches = split_content_into_batches(
         report_data, "ntfy", update_info, max_bytes=3800, mode=mode
     )
 
     total_batches = len(batches)
-    print(f"ntfyMessage split into {total_batches} batch sending [{report_type}]")
+    print(f"ntfy message split into {total_batches} batches for sending [{report_type}]")
 
-    # 反转batch次order，使得在ntfy客户端display时order正确
-    # ntfydisplaylatest消息在上面，所以我们从最后一batchstartpush
+    # Reverse batch order so display order is correct in ntfy client
+    # ntfy displays latest messages at top, so we push from last batch
     reversed_batches = list(reversed(batches))
     
     print(f"ntfy will push in reverse order (last batch first) to ensure correct client display order")
 
-    # 逐batchSending（反向order）
+    # Send batch by batch (reverse order)
     success_count = 0
     for idx, batch_content in enumerate(reversed_batches, 1):
-        # 计算正确的batch次编号（用户视角的编号）
+        # Calculate correct batch number (from user perspective)
         actual_batch_num = total_batches - idx + 1
         
         batch_size = len(batch_content.encode("utf-8"))
         print(
-            f"Sendingntfy# {actual_batch_num}/{total_batches} batch次（pushorder: {idx}/{total_batches}），大小：{batch_size}  bytes [{report_type}]"
+            f"Sending ntfy batch {actual_batch_num}/{total_batches} (push order: {idx}/{total_batches}), size: {batch_size} bytes [{report_type}]"
         )
 
-        # check消息大小，确保not超过4KB
+        # Check message size, ensure not exceeding 4KB
         if batch_size > 4096:
-            print(f"警告：ntfy# {actual_batch_num}  batch message too large ({batch_size}  bytes), may be rejected")
+            print(f"Warning: ntfy batch {actual_batch_num} message too large ({batch_size} bytes), may be rejected")
 
-        # 添加batch identifier（use正确的batch次编号）
+        # Add batch identifier (use correct batch number)
         current_headers = headers.copy()
         if total_batches > 1:
-            batch_header = f"**[# {actual_batch_num}/{total_batches} batch次]**\n\n"
+            batch_header = f"**[Batch {actual_batch_num}/{total_batches}]**\n\n"
             batch_content = batch_header + batch_content
             current_headers["Title"] = (
                 f"{report_type_en} ({actual_batch_num}/{total_batches})"
@@ -3947,18 +3947,18 @@ def send_to_ntfy(
             )
 
             if response.status_code == 200:
-                print(f"ntfy# {actual_batch_num}/{total_batches} batch sendingsuccess [{report_type}]")
+                print(f"ntfy batch {actual_batch_num}/{total_batches} sent successfully [{report_type}]")
                 success_count += 1
                 if idx < total_batches:
-                    # 公共服务器建议 2-3 秒，自托管可以更短
+                    # Public server recommended 2-3 seconds, self-hosted can be shorter
                     interval = 2 if "ntfy.sh" in server_url else 1
                     time.sleep(interval)
             elif response.status_code == 429:
                 print(
-                    f"ntfy# {actual_batch_num}/{total_batches}  batch rate limited [{report_type}]， waiting before retry"
+                    f"ntfy batch {actual_batch_num}/{total_batches} rate limited [{report_type}], waiting before retry"
                 )
-                time.sleep(10)  # waiting10seconds retry
-                # 重试once
+                time.sleep(10)  # Wait 10 seconds before retry
+                # Retry once
                 retry_response = requests.post(
                     url,
                     headers=current_headers,
@@ -3967,43 +3967,43 @@ def send_to_ntfy(
                     timeout=30,
                 )
                 if retry_response.status_code == 200:
-                    print(f"ntfy# {actual_batch_num}/{total_batches} batch次重试success [{report_type}]")
+                    print(f"ntfy batch {actual_batch_num}/{total_batches} retry successful [{report_type}]")
                     success_count += 1
                 else:
                     print(
-                        f"ntfy# {actual_batch_num}/{total_batches} batch次重试failed，status码：{retry_response.status_code}"
+                        f"ntfy batch {actual_batch_num}/{total_batches} retry failed, status code: {retry_response.status_code}"
                     )
             elif response.status_code == 413:
                 print(
-                    f"ntfy# {actual_batch_num}/{total_batches}  batch message rejected for being too large [{report_type}]，message size: {batch_size}  bytes"
+                    f"ntfy batch {actual_batch_num}/{total_batches} message rejected for being too large [{report_type}], message size: {batch_size} bytes"
                 )
             else:
                 print(
-                    f"ntfy# {actual_batch_num}/{total_batches} batch sendingfailed [{report_type}]，status码：{response.status_code}"
+                    f"ntfy batch {actual_batch_num}/{total_batches} sending failed [{report_type}], status code: {response.status_code}"
                 )
                 try:
-                    print(f"error详情：{response.text}")
+                    print(f"Error details: {response.text}")
                 except:
                     pass
 
         except requests.exceptions.ConnectTimeout:
-            print(f"ntfy# {actual_batch_num}/{total_batches}  batch connection timeout [{report_type}]")
+            print(f"ntfy batch {actual_batch_num}/{total_batches} connection timeout [{report_type}]")
         except requests.exceptions.ReadTimeout:
-            print(f"ntfy# {actual_batch_num}/{total_batches}  batch read timeout [{report_type}]")
+            print(f"ntfy batch {actual_batch_num}/{total_batches} read timeout [{report_type}]")
         except requests.exceptions.ConnectionError as e:
-            print(f"ntfy# {actual_batch_num}/{total_batches} batch次连接error [{report_type}]：{e}")
+            print(f"ntfy batch {actual_batch_num}/{total_batches} connection error [{report_type}]: {e}")
         except Exception as e:
-            print(f"ntfy# {actual_batch_num}/{total_batches} batch sending异常 [{report_type}]：{e}")
+            print(f"ntfy batch {actual_batch_num}/{total_batches} sending exception [{report_type}]: {e}")
 
-    # determine整体Sending是否success
+    # Determine if overall sending was successful
     if success_count == total_batches:
-        print(f"ntfyAll {total_batches} batch sendingcompleted [{report_type}]")
+        print(f"ntfy all {total_batches} batches sent successfully [{report_type}]")
         return True
     elif success_count > 0:
-        print(f"ntfypartialSendingsuccess：{success_count}/{total_batches} batch次 [{report_type}]")
+        print(f"ntfy partial sending success: {success_count}/{total_batches} batches [{report_type}]")
         return True  # partialsuccessalso considered assuccess
     else:
-        print(f"ntfySending完全failed [{report_type}]")
+        print(f"ntfy sending completely failed [{report_type}]")
         return False
 
 
@@ -4014,8 +4014,8 @@ class NewsAnalyzer:
     # Mode strategy definition
     MODE_STRATEGIES = {
         "incremental": {
-            "mode_name": "incrementalmode",
-            "description": "incrementalmode（只关注New news，无New时notpush）",
+            "mode_name": "Incremental mode",
+            "description": "Incremental mode (only focus on new news, no push when no new)",
             "realtime_report_type": "Real-time Incremental",
             "summary_report_type": "Daily Summary",
             "should_send_realtime": True,
@@ -4023,8 +4023,8 @@ class NewsAnalyzer:
             "summary_mode": "daily",
         },
         "current": {
-            "mode_name": "current榜单mode",
-            "description": "current榜单mode（current榜单matchnews + New news区域 + 按时push）",
+            "mode_name": "Current ranking mode",
+            "description": "Current ranking mode (current ranking matched news + new news section + scheduled push)",
             "realtime_report_type": "Real-time Current Rankings",
             "summary_report_type": "Current Rankings Summary",
             "should_send_realtime": True,
@@ -4032,8 +4032,8 @@ class NewsAnalyzer:
             "summary_mode": "current",
         },
         "daily": {
-            "mode_name": "Daily Summarymode",
-            "description": "Daily Summarymode（Allmatchnews + New news区域 + 按时push）",
+            "mode_name": "Daily summary mode",
+            "description": "Daily summary mode (all matched news + new news section + scheduled push)",
             "realtime_report_type": "",
             "summary_report_type": "Daily Summary",
             "should_send_realtime": False,
@@ -4057,7 +4057,7 @@ class NewsAnalyzer:
             self._check_version_update()
 
     def _detect_docker_environment(self) -> bool:
-        """检测是否run在 Docker 容器中"""
+        """Detect if running in Docker container"""
         try:
             if os.environ.get("DOCKER_CONTAINER") == "true":
                 return True
@@ -4070,7 +4070,7 @@ class NewsAnalyzer:
             return False
 
     def _should_open_browser(self) -> bool:
-        """determine是否应该打开浏览器"""
+        """Determine if browser should be opened"""
         return not self.is_github_actions and not self.is_docker_container
 
     def _setup_proxy(self) -> None:
@@ -4099,10 +4099,10 @@ class NewsAnalyzer:
             else:
                 print("Version check complete, currently latest version")
         except Exception as e:
-            print(f"版本check出错: {e}")
+            print(f"Version check error: {e}")
 
     def _get_mode_strategy(self) -> Dict:
-        """Fetchingcurrentmode的策略configuration"""
+        """Get strategy configuration for current mode"""
         return self.MODE_STRATEGIES.get(self.report_mode, self.MODE_STRATEGIES["daily"])
 
     def _has_notification_configured(self) -> bool:
@@ -4127,10 +4127,10 @@ class NewsAnalyzer:
     ) -> bool:
         """Check if there is valid news content"""
         if self.report_mode in ["incremental", "current"]:
-            # incrementalmode和currentmode下，只要stats有within容就说明有match的news
+            # In incremental and current mode, as long as stats has content, it means there is matched news
             return any(stat["count"] > 0 for stat in stats)
         else:
-            # Daily Summarymode下，check是否有match的frequency词news或New news
+            # In daily summary mode, check if there is matched frequency word news or new news
             has_matched_news = any(stat["count"] > 0 for stat in stats)
             has_new_news = bool(
                 new_titles and any(len(titles) > 0 for titles in new_titles.values())
@@ -4140,14 +4140,14 @@ class NewsAnalyzer:
     def _load_analysis_data(
         self,
     ) -> Optional[Tuple[Dict, Dict, Dict, Dict, List, List]]:
-        """统一的dataload和预Processing，usecurrentMonitoring platformslistfilterhistorical data"""
+        """Unified data loading and preprocessing, filter historical data using current monitoring platforms list"""
         try:
-            # Fetchingcurrentconfiguration的Monitoring platformsIDlist
+            # Get current configuration monitoring platforms ID list
             current_platform_ids = []
             for platform in CONFIG["PLATFORMS"]:
                 current_platform_ids.append(platform["id"])
 
-            print(f"currentMonitoring platforms: {current_platform_ids}")
+            print(f"Current monitoring platforms: {current_platform_ids}")
 
             all_results, id_to_name, title_info = read_all_today_titles(
                 current_platform_ids
@@ -4158,7 +4158,7 @@ class NewsAnalyzer:
                 return None
 
             total_titles = sum(len(titles) for titles in all_results.values())
-            print(f"Read {total_titles} titles（已按currentMonitoring platformsfilter）")
+            print(f"Read {total_titles} titles (filtered by current monitoring platforms)")
 
             new_titles = detect_latest_new_titles(current_platform_ids)
             word_groups, filter_words = load_frequency_words()
@@ -4172,7 +4172,7 @@ class NewsAnalyzer:
                 filter_words,
             )
         except Exception as e:
-            print(f"dataloadfailed: {e}")
+            print(f"Data load failed: {e}")
             return None
 
     def _prepare_current_title_info(self, results: Dict, time_info: str) -> Dict:
@@ -4207,9 +4207,9 @@ class NewsAnalyzer:
         failed_ids: Optional[List] = None,
         is_daily_summary: bool = False,
     ) -> Tuple[List[Dict], str]:
-        """Unified analysis pipeline：dataProcessing → statistics计算 → HTML生成"""
+        """Unified analysis pipeline: data processing → statistics calculation → HTML generation"""
 
-        # statistics计算
+        # Statistics calculation
         stats, total_titles = count_word_frequency(
             data_source,
             word_groups,
@@ -4221,7 +4221,7 @@ class NewsAnalyzer:
             mode=mode,
         )
 
-        # HTML生成
+        # HTML generation
         html_file = generate_html_report(
             stats,
             total_titles,
@@ -4245,7 +4245,7 @@ class NewsAnalyzer:
         id_to_name: Optional[Dict] = None,
         html_file_path: Optional[str] = None,
     ) -> bool:
-        """统一的通知Sending逻辑，containsAlldetermineitems件"""
+        """Unified notification sending logic, contains all determination conditions"""
         has_notification = self._has_notification_configured()
 
         if (
@@ -4266,9 +4266,9 @@ class NewsAnalyzer:
             )
             return True
         elif CONFIG["ENABLE_NOTIFICATION"] and not has_notification:
-            print("⚠️ 警告：通知功能已启用但No notification channels configured，将Skip通知Sending")
+            print("⚠️ Warning: Notification function enabled but no notification channels configured, will skip notification sending")
         elif not CONFIG["ENABLE_NOTIFICATION"]:
-            print(f"Skip{report_type}notification: notification disabled")
+            print(f"Skip {report_type} notification: notification disabled")
         elif (
             CONFIG["ENABLE_NOTIFICATION"]
             and has_notification
@@ -4277,23 +4277,23 @@ class NewsAnalyzer:
             mode_strategy = self._get_mode_strategy()
             if "real-time" in report_type:
                 print(
-                    f"Skipreal-timepush通知：{mode_strategy['mode_name']}No matching news detected under"
+                    f"Skip real-time push notification: {mode_strategy['mode_name']} no matching news detected"
                 )
             else:
                 print(
-                    f"Skip{mode_strategy['summary_report_type']}notification: no valid news content matched"
+                    f"Skip {mode_strategy['summary_report_type']} notification: no valid news content matched"
                 )
 
         return False
 
     def _generate_summary_report(self, mode_strategy: Dict) -> Optional[str]:
-        """Generating summary report（带通知）"""
+        """Generate summary report (with notification)"""
         summary_type = (
             "Current Rankings Summary" if mode_strategy["summary_mode"] == "current" else "Daily Summary"
         )
-        print(f"生成{summary_type}report...")
+        print(f"Generating {summary_type} report...")
 
-        # load分析data
+        # Load analysis data
         analysis_data = self._load_analysis_data()
         if not analysis_data:
             return None
@@ -4302,7 +4302,7 @@ class NewsAnalyzer:
             analysis_data
         )
 
-        # run分析pipeline
+        # Run analysis pipeline
         stats, html_file = self._run_analysis_pipeline(
             all_results,
             mode_strategy["summary_mode"],
@@ -4314,9 +4314,9 @@ class NewsAnalyzer:
             is_daily_summary=True,
         )
 
-        print(f"{summary_type}report已生成: {html_file}")
+        print(f"{summary_type} report generated: {html_file}")
 
-        # Sending通知
+        # Send notification
         self._send_notification_if_needed(
             stats,
             mode_strategy["summary_report_type"],
@@ -4330,11 +4330,11 @@ class NewsAnalyzer:
         return html_file
 
     def _generate_summary_html(self, mode: str = "daily") -> Optional[str]:
-        """Generating summary HTML"""
+        """Generate summary HTML"""
         summary_type = "Current Rankings Summary" if mode == "current" else "Daily Summary"
-        print(f"生成{summary_type}HTML...")
+        print(f"Generating {summary_type} HTML...")
 
-        # load分析data
+        # Load analysis data
         analysis_data = self._load_analysis_data()
         if not analysis_data:
             return None
@@ -4343,7 +4343,7 @@ class NewsAnalyzer:
             analysis_data
         )
 
-        # run分析pipeline
+        # Run analysis pipeline
         _, html_file = self._run_analysis_pipeline(
             all_results,
             mode,
@@ -4355,25 +4355,25 @@ class NewsAnalyzer:
             is_daily_summary=True,
         )
 
-        print(f"{summary_type}HTML已生成: {html_file}")
+        print(f"{summary_type} HTML generated: {html_file}")
         return html_file
 
     def _initialize_and_check_config(self) -> None:
-        """通用初始化和configurationcheck"""
+        """General initialization and configuration check"""
         now = get_beijing_time()
         print(f"Current Beijing time: {now.strftime('%Y-%m-%d %H:%M:%S')}")
 
         if not CONFIG["ENABLE_CRAWLER"]:
-            print("Crawler disabled（ENABLE_CRAWLER=False），Program exit")
+            print("Crawler disabled (ENABLE_CRAWLER=False), program exit")
             return
 
         has_notification = self._has_notification_configured()
         if not CONFIG["ENABLE_NOTIFICATION"]:
             print("Notification disabled (ENABLE_NOTIFICATION=False), will only crawl data")
         elif not has_notification:
-            print("No notification channels configured，将只进行data抓取，notSending通知")
+            print("No notification channels configured, will only crawl data, not send notifications")
         else:
-            print("通知功能已启用，将Sending通知")
+            print("Notification function enabled, will send notifications")
 
         mode_strategy = self._get_mode_strategy()
         print(f"Report mode: {self.report_mode}")
@@ -4389,9 +4389,9 @@ class NewsAnalyzer:
                 ids.append(platform["id"])
 
         print(
-            f"configuration的Monitoring platforms: {[p.get('name', p['id']) for p in CONFIG['PLATFORMS']]}"
+            f"Configured monitoring platforms: {[p.get('name', p['id']) for p in CONFIG['PLATFORMS']]}"
         )
-        print(f"Start crawling data，Request间隔 {self.request_interval} milliseconds")
+        print(f"Start crawling data, request interval {self.request_interval} milliseconds")
         ensure_directory_exists("output")
 
         results, id_to_name, failed_ids = self.data_fetcher.crawl_websites(
@@ -4414,9 +4414,9 @@ class NewsAnalyzer:
         time_info = Path(save_titles_to_file(results, id_to_name, failed_ids)).stem
         word_groups, filter_words = load_frequency_words()
 
-        # currentmode下，real-timepush需要usecomplete的historical data来Ensure completeness of statistics
+        # In current mode, real-time push needs to use complete historical data to ensure completeness of statistics
         if self.report_mode == "current":
-            # loadcomplete的historical data（filtered by current platforms）
+            # Load complete historical data (filtered by current platforms)
             analysis_data = self._load_analysis_data()
             if analysis_data:
                 (
@@ -4429,7 +4429,7 @@ class NewsAnalyzer:
                 ) = analysis_data
 
                 print(
-                    f"currentmode：usefilter后的historical data，includes platforms: {list(all_results.keys())}"
+                    f"Current mode: using filtered historical data, includes platforms: {list(all_results.keys())}"
                 )
 
                 stats, html_file = self._run_analysis_pipeline(
@@ -4447,7 +4447,7 @@ class NewsAnalyzer:
 
                 print(f"HTML report generated: {html_file}")
 
-                # Sendingreal-time通知（usecompletehistorical data的statisticsresult）
+                # Send real-time notification (use complete historical data statistics result)
                 summary_html = None
                 if mode_strategy["should_send_realtime"]:
                     self._send_notification_if_needed(
@@ -4460,8 +4460,8 @@ class NewsAnalyzer:
                         html_file_path=html_file,
                     )
             else:
-                print("❌ criticalerror：无法read刚save的data file")
-                raise RuntimeError("data一致性checkfailed：save后立即readfailed")
+                print("❌ Critical error: unable to read just saved data file")
+                raise RuntimeError("Data consistency check failed: read failed immediately after save")
         else:
             title_info = self._prepare_current_title_info(results, time_info)
             stats, html_file = self._run_analysis_pipeline(
@@ -4476,7 +4476,7 @@ class NewsAnalyzer:
             )
             print(f"HTML report generated: {html_file}")
 
-            # Sendingreal-time通知（如果需要）
+            # Send real-time notification (if needed)
             summary_html = None
             if mode_strategy["should_send_realtime"]:
                 self._send_notification_if_needed(
@@ -4489,19 +4489,19 @@ class NewsAnalyzer:
                     html_file_path=html_file,
                 )
 
-        # Generating summary report（如果需要）
+        # Generate summary report (if needed)
         summary_html = None
         if mode_strategy["should_generate_summary"]:
             if mode_strategy["should_send_realtime"]:
-                # 如果已经Sendingreal-time notification，汇total只generate HTMLnotSending通知
+                # If already sent real-time notification, summary only generates HTML without sending notification
                 summary_html = self._generate_summary_html(
                     mode_strategy["summary_mode"]
                 )
             else:
-                # dailymode：直接Generating summary report并Sending通知
+                # Daily mode: directly generate summary report and send notification
                 summary_html = self._generate_summary_report(mode_strategy)
 
-        # 打开浏览器（Only in non-container environment）
+        # Open browser (only in non-container environment)
         if self._should_open_browser() and html_file:
             if summary_html:
                 summary_url = "file://" + str(Path(summary_html).resolve())
@@ -4513,9 +4513,9 @@ class NewsAnalyzer:
                 webbrowser.open(file_url)
         elif self.is_docker_container and html_file:
             if summary_html:
-                print(f"Summary report generated（Docker environment）: {summary_html}")
+                print(f"Summary report generated (Docker environment): {summary_html}")
             else:
-                print(f"HTML report generated（Docker environment）: {html_file}")
+                print(f"HTML report generated (Docker environment): {html_file}")
 
         return summary_html
 
@@ -4540,13 +4540,13 @@ def main():
         analyzer = NewsAnalyzer()
         analyzer.run()
     except FileNotFoundError as e:
-        print(f"❌ Configuration fileerror: {e}")
-        print("\n请确保以下文件存在:")
+        print(f"❌ Configuration file error: {e}")
+        print("\nPlease ensure the following files exist:")
         print("  • config/config.yaml")
         print("  • config/frequency_words.txt")
-        print("\n参考项目文档进行正确configuration")
+        print("\nRefer to project documentation for proper configuration")
     except Exception as e:
-        print(f"❌ 程序runerror: {e}")
+        print(f"❌ Program run error: {e}")
         raise
 
 
