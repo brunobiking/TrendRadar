@@ -99,3 +99,44 @@ platforms:
     name: "Douyin"
   - id: "zhihu"
     name: "Zhihu"
+  
+  # USA Financial Market Sources
+  - id: "yahoo-finance-trending"
+    name: "Yahoo Finance Trending"
+    enabled: true
+    language: "en"
+    category: "finance"
+    config:
+      data_type: ["trending", "gainers", "losers"]
+      
+  - id: "seeking-alpha"
+    name: "Seeking Alpha Market News"
+    enabled: true
+    language: "en"
+    category: "finance"
+    config:
+      topics: ["market_news", "earnings"]
+      
+  - id: "benzinga"
+    name: "Benzinga Real-time News"
+    enabled: true
+    language: "en"
+    category: "finance"
+    config:
+      channels: ["news", "analyst_ratings"]
+      
+  - id: "marketwatch"
+    name: "MarketWatch Breaking News"
+    enabled: true
+    language: "en"
+    category: "finance"
+    config:
+      sections: ["breaking", "market_pulse"]
+      
+  - id: "finviz-news"
+    name: "Finviz Market News"
+    enabled: true
+    language: "en"
+    category: "finance"
+    config:
+      filters: ["news"]

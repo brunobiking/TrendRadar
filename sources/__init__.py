@@ -1,0 +1,3 @@
+"""
+Sources module for TrendRadar
+"""
