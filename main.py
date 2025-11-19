@@ -83,14 +83,7 @@ def load_config():
         if os.environ.get("ENABLE_NOTIFICATION", "").strip()
         else config_data["notification"]["enable_notification"],
         "MESSAGE_BATCH_SIZE": config_data["notification"]["message_batch_size"],
-        "DINGTALK_BATCH_SIZE": config_data["notification"].get(
-            "dingtalk_batch_size", 20000
-        ),
-        "FEISHU_BATCH_SIZE": config_data["notification"].get("feishu_batch_size", 29000),
         "BATCH_SEND_INTERVAL": config_data["notification"]["batch_send_interval"],
-        "FEISHU_MESSAGE_SEPARATOR": config_data["notification"][
-            "feishu_message_separator"
-        ],
         "PUSH_WINDOW": {
             "ENABLED": os.environ.get("PUSH_WINDOW_ENABLED", "").strip().lower()
             in ("true", "1")
@@ -135,21 +128,7 @@ def load_config():
     notification = config_data.get("notification", {})
     webhooks = notification.get("webhooks", {})
 
-    config["FEISHU_WEBHOOK_URL"] = os.environ.get(
-        "FEISHU_WEBHOOK_URL", ""
-    ).strip() or webhooks.get("feishu_url", "")
-    config["DINGTALK_WEBHOOK_URL"] = os.environ.get(
-        "DINGTALK_WEBHOOK_URL", ""
-    ).strip() or webhooks.get("dingtalk_url", "")
-    config["WEWORK_WEBHOOK_URL"] = os.environ.get(
-        "WEWORK_WEBHOOK_URL", ""
-    ).strip() or webhooks.get("wework_url", "")
-    config["TELEGRAM_BOT_TOKEN"] = os.environ.get(
-        "TELEGRAM_BOT_TOKEN", ""
-    ).strip() or webhooks.get("telegram_bot_token", "")
-    config["TELEGRAM_CHAT_ID"] = os.environ.get(
-        "TELEGRAM_CHAT_ID", ""
-    ).strip() or webhooks.get("telegram_chat_id", "")
+
 
     # Email configuration
     config["EMAIL_FROM"] = os.environ.get("EMAIL_FROM", "").strip() or webhooks.get(
@@ -181,21 +160,6 @@ def load_config():
 
     # Output configuration source information
     notification_sources = []
-    if config["FEISHU_WEBHOOK_URL"]:
-        source = "env var" if os.environ.get("FEISHU_WEBHOOK_URL") else "config file"
-        notification_sources.append(f"Feishu({source})")
-    if config["DINGTALK_WEBHOOK_URL"]:
-        source = "env var" if os.environ.get("DINGTALK_WEBHOOK_URL") else "config file"
-        notification_sources.append(f"DingTalk({source})")
-    if config["WEWORK_WEBHOOK_URL"]:
-        source = "env var" if os.environ.get("WEWORK_WEBHOOK_URL") else "config file"
-        notification_sources.append(f"WeWork({source})")
-    if config["TELEGRAM_BOT_TOKEN"] and config["TELEGRAM_CHAT_ID"]:
-        token_source = (
-            "env var" if os.environ.get("TELEGRAM_BOT_TOKEN") else "config file"
-        )
-        chat_source = "env var" if os.environ.get("TELEGRAM_CHAT_ID") else "config file"
-        notification_sources.append(f"Telegram({token_source}/{chat_source})")
     if config["EMAIL_FROM"] and config["EMAIL_PASSWORD"] and config["EMAIL_TO"]:
         from_source = "env var" if os.environ.get("EMAIL_FROM") else "config file"
         notification_sources.append(f"Email({from_source})")
@@ -1035,18 +999,9 @@ def format_rank_display(ranks: List[int], rank_threshold: int, format_type: str)
     if format_type == "html":
         highlight_start = "<font color='red'><strong>"
         highlight_end = "</strong></font>"
-    elif format_type == "feishu":
-        highlight_start = "<font color='red'>**"
-        highlight_end = "**</font>"
-    elif format_type == "dingtalk":
+    elif format_type == "ntfy":
         highlight_start = "**"
         highlight_end = "**"
-    elif format_type == "wework":
-        highlight_start = "**"
-        highlight_end = "**"
-    elif format_type == "telegram":
-        highlight_start = "<b>"
-        highlight_end = "</b>"
     else:
         highlight_start = "**"
         highlight_end = "**"
@@ -1483,95 +1438,7 @@ def format_title_for_platform(
 
     cleaned_title = clean_title(title_data["title"])
 
-    if platform == "feishu":
-        if link_url:
-            formatted_title = f"[{cleaned_title}]({link_url})"
-        else:
-            formatted_title = cleaned_title
-
-        title_prefix = "🆕 " if title_data.get("is_new") else ""
-
-        if show_source:
-            result = f"<font color='grey'>[{title_data['source_name']}]</font> {title_prefix}{formatted_title}"
-        else:
-            result = f"{title_prefix}{formatted_title}"
-
-        if rank_display:
-            result += f" {rank_display}"
-        if title_data["time_display"]:
-            result += f" <font color='grey'>- {title_data['time_display']}</font>"
-        if title_data["count"] > 1:
-            result += f" <font color='green'>({title_data['count']} times)</font>"
-
-        return result
-
-    elif platform == "dingtalk":
-        if link_url:
-            formatted_title = f"[{cleaned_title}]({link_url})"
-        else:
-            formatted_title = cleaned_title
-
-        title_prefix = "🆕 " if title_data.get("is_new") else ""
-
-        if show_source:
-            result = f"[{title_data['source_name']}] {title_prefix}{formatted_title}"
-        else:
-            result = f"{title_prefix}{formatted_title}"
-
-        if rank_display:
-            result += f" {rank_display}"
-        if title_data["time_display"]:
-            result += f" - {title_data['time_display']}"
-        if title_data["count"] > 1:
-            result += f" ({title_data['count']} times)"
-
-        return result
-
-    elif platform == "wework":
-        if link_url:
-            formatted_title = f"[{cleaned_title}]({link_url})"
-        else:
-            formatted_title = cleaned_title
-
-        title_prefix = "🆕 " if title_data.get("is_new") else ""
-
-        if show_source:
-            result = f"[{title_data['source_name']}] {title_prefix}{formatted_title}"
-        else:
-            result = f"{title_prefix}{formatted_title}"
-
-        if rank_display:
-            result += f" {rank_display}"
-        if title_data["time_display"]:
-            result += f" - {title_data['time_display']}"
-        if title_data["count"] > 1:
-            result += f" ({title_data['count']} times)"
-
-        return result
-
-    elif platform == "telegram":
-        if link_url:
-            formatted_title = f'<a href="{link_url}">{html_escape(cleaned_title)}</a>'
-        else:
-            formatted_title = cleaned_title
-
-        title_prefix = "🆕 " if title_data.get("is_new") else ""
-
-        if show_source:
-            result = f"[{title_data['source_name']}] {title_prefix}{formatted_title}"
-        else:
-            result = f"{title_prefix}{formatted_title}"
-
-        if rank_display:
-            result += f" {rank_display}"
-        if title_data["time_display"]:
-            result += f" <code>- {title_data['time_display']}</code>"
-        if title_data["count"] > 1:
-            result += f" <code>({title_data['count']} times)</code>"
-
-        return result
-
-    elif platform == "ntfy":
+    if platform == "ntfy":
         if link_url:
             formatted_title = f"[{cleaned_title}]({link_url})"
         else:
@@ -2677,186 +2544,6 @@ def render_html_content(
     return html
 
 
-def render_feishu_content(
-    report_data: Dict, update_info: Optional[Dict] = None, mode: str = "daily"
-) -> str:
-    """Render Feishu content"""
-    text_content = ""
-
-    if report_data["stats"]:
-        text_content += f"📊 **Trending Keywords Statistics**\n\n"
-
-    total_count = len(report_data["stats"])
-
-    for i, stat in enumerate(report_data["stats"]):
-        word = stat["word"]
-        count = stat["count"]
-
-        sequence_display = f"<font color='grey'>[{i + 1}/{total_count}]</font>"
-
-        if count >= 10:
-            text_content += f"🔥 {sequence_display} **{word}** : <font color='red'>{count}</font> items\n\n"
-        elif count >= 5:
-            text_content += f"📈 {sequence_display} **{word}** : <font color='orange'>{count}</font> items\n\n"
-        else:
-            text_content += f"📌 {sequence_display} **{word}** : {count} items\n\n"
-
-        for j, title_data in enumerate(stat["titles"], 1):
-            formatted_title = format_title_for_platform(
-                "feishu", title_data, show_source=True
-            )
-            text_content += f"  {j}. {formatted_title}\n"
-
-            if j < len(stat["titles"]):
-                text_content += "\n"
-
-        if i < len(report_data["stats"]) - 1:
-            text_content += f"\n{CONFIG['FEISHU_MESSAGE_SEPARATOR']}\n\n"
-
-    if not text_content:
-        if mode == "incremental":
-            mode_text = "No new matching trending keywords in incremental mode"
-        elif mode == "current":
-            mode_text = "No matching trending keywords in current ranking mode"
-        else:
-            mode_text = "No matching trending keywords"
-        text_content = f"📭 {mode_text}\n\n"
-
-    if report_data["new_titles"]:
-        if text_content and "No matching" not in text_content:
-            text_content += f"\n{CONFIG['FEISHU_MESSAGE_SEPARATOR']}\n\n"
-
-        text_content += (
-            f"🆕 **New Trending News** (Total {report_data['total_new_count']} items)\n\n"
-        )
-
-        for source_data in report_data["new_titles"]:
-            text_content += (
-                f"**{source_data['source_name']}** ({len(source_data['titles'])} items):\n"
-            )
-
-            for j, title_data in enumerate(source_data["titles"], 1):
-                title_data_copy = title_data.copy()
-                title_data_copy["is_new"] = False
-                formatted_title = format_title_for_platform(
-                    "feishu", title_data_copy, show_source=False
-                )
-                text_content += f"  {j}. {formatted_title}\n"
-
-            text_content += "\n"
-
-    if report_data["failed_ids"]:
-        if text_content and "No matching" not in text_content:
-            text_content += f"\n{CONFIG['FEISHU_MESSAGE_SEPARATOR']}\n\n"
-
-        text_content += "⚠️ **Failed to fetch data from platforms:**\n\n"
-        for i, id_value in enumerate(report_data["failed_ids"], 1):
-            text_content += f"  • <font color='red'>{id_value}</font>\n"
-
-    now = get_beijing_time()
-    text_content += (
-        f"\n\n<font color='grey'>Update time: {now.strftime('%Y-%m-%d %H:%M:%S')}</font>"
-    )
-
-    if update_info:
-        text_content += f"\n<font color='grey'>TrendRadar New version found {update_info['remote_version']}，current {update_info['current_version']}</font>"
-
-    return text_content
-
-
-def render_dingtalk_content(
-    report_data: Dict, update_info: Optional[Dict] = None, mode: str = "daily"
-) -> str:
-    """Render DingTalk content"""
-    text_content = ""
-
-    total_titles = sum(
-        len(stat["titles"]) for stat in report_data["stats"] if stat["count"] > 0
-    )
-    now = get_beijing_time()
-
-    text_content += f"**Total news:** {total_titles}\n\n"
-    text_content += f"**time：** {now.strftime('%Y-%m-%d %H:%M:%S')}\n\n"
-    text_content += f"**Type:** Trending Analysis Report\n\n"
-
-    text_content += "---\n\n"
-
-    if report_data["stats"]:
-        text_content += f"📊 **Trending Keywords Statistics**\n\n"
-
-        total_count = len(report_data["stats"])
-
-        for i, stat in enumerate(report_data["stats"]):
-            word = stat["word"]
-            count = stat["count"]
-
-            sequence_display = f"[{i + 1}/{total_count}]"
-
-            if count >= 10:
-                text_content += f"🔥 {sequence_display} **{word}** : **{count}** items\n\n"
-            elif count >= 5:
-                text_content += f"📈 {sequence_display} **{word}** : **{count}** items\n\n"
-            else:
-                text_content += f"📌 {sequence_display} **{word}** : {count} items\n\n"
-
-            for j, title_data in enumerate(stat["titles"], 1):
-                formatted_title = format_title_for_platform(
-                    "dingtalk", title_data, show_source=True
-                )
-                text_content += f"  {j}. {formatted_title}\n"
-
-                if j < len(stat["titles"]):
-                    text_content += "\n"
-
-            if i < len(report_data["stats"]) - 1:
-                text_content += f"\n---\n\n"
-
-    if not report_data["stats"]:
-        if mode == "incremental":
-            mode_text = "No new matching trending keywords in incremental mode"
-        elif mode == "current":
-            mode_text = "No matching trending keywords in current ranking mode"
-        else:
-            mode_text = "No matching trending keywords"
-        text_content += f"📭 {mode_text}\n\n"
-
-    if report_data["new_titles"]:
-        if text_content and "No matching" not in text_content:
-            text_content += f"\n---\n\n"
-
-        text_content += (
-            f"🆕 **New Trending News** (Total {report_data['total_new_count']} items)\n\n"
-        )
-
-        for source_data in report_data["new_titles"]:
-            text_content += f"**{source_data['source_name']}** ({len(source_data['titles'])} items):\n\n"
-
-            for j, title_data in enumerate(source_data["titles"], 1):
-                title_data_copy = title_data.copy()
-                title_data_copy["is_new"] = False
-                formatted_title = format_title_for_platform(
-                    "dingtalk", title_data_copy, show_source=False
-                )
-                text_content += f"  {j}. {formatted_title}\n"
-
-            text_content += "\n"
-
-    if report_data["failed_ids"]:
-        if text_content and "No matching" not in text_content:
-            text_content += f"\n---\n\n"
-
-        text_content += "⚠️ **Failed to fetch data from platforms:**\n\n"
-        for i, id_value in enumerate(report_data["failed_ids"], 1):
-            text_content += f"  • **{id_value}**\n"
-
-    text_content += f"\n\n> Update time: {now.strftime('%Y-%m-%d %H:%M:%S')}"
-
-    if update_info:
-        text_content += f"\n> TrendRadar New version found **{update_info['remote_version']}**，current **{update_info['current_version']}**"
-
-    return text_content
-
-
 def split_content_into_batches(
     report_data: Dict,
     format_type: str,
@@ -2864,16 +2551,9 @@ def split_content_into_batches(
     max_bytes: int = None,
     mode: str = "daily",
 ) -> List[str]:
-    """Process message content in batches, ensure word group title + at least one complete news item"""
+    """Process message content in batches for ntfy, ensure word group title + at least one complete news item"""
     if max_bytes is None:
-        if format_type == "dingtalk":
-            max_bytes = CONFIG.get("DINGTALK_BATCH_SIZE", 20000)
-        elif format_type == "feishu":
-            max_bytes = CONFIG.get("FEISHU_BATCH_SIZE", 29000)
-        elif format_type == "ntfy":
-            max_bytes = 3800
-        else:
-            max_bytes = CONFIG.get("MESSAGE_BATCH_SIZE", 4000)
+        max_bytes = 3800  # ntfy limit
 
     batches = []
 
@@ -2882,55 +2562,16 @@ def split_content_into_batches(
     )
     now = get_beijing_time()
 
-    base_header = ""
-    if format_type == "wework":
-        base_header = f"**Total news:** {total_titles}\n\n\n\n"
-    elif format_type == "telegram":
-        base_header = f"Total news: {total_titles}\n\n"
-    elif format_type == "ntfy":
-        base_header = f"**Total news:** {total_titles}\n\n"
-    elif format_type == "feishu":
-        base_header = ""
-    elif format_type == "dingtalk":
-        base_header = f"**Total news:** {total_titles}\n\n"
-        base_header += f"**time：** {now.strftime('%Y-%m-%d %H:%M:%S')}\n\n"
-        base_header += f"**Type:** Trending Analysis Report\n\n"
-        base_header += "---\n\n"
-
-    base_footer = ""
-    if format_type == "wework":
-        base_footer = f"\n\n\n> Update time: {now.strftime('%Y-%m-%d %H:%M:%S')}"
-        if update_info:
-            base_footer += f"\n> TrendRadar New version found **{update_info['remote_version']}**，current **{update_info['current_version']}**"
-    elif format_type == "telegram":
-        base_footer = f"\n\nUpdate time: {now.strftime('%Y-%m-%d %H:%M:%S')}"
-        if update_info:
-            base_footer += f"\nTrendRadar New version found {update_info['remote_version']}，current {update_info['current_version']}"
-    elif format_type == "ntfy":
-        base_footer = f"\n\n> Update time: {now.strftime('%Y-%m-%d %H:%M:%S')}"
-        if update_info:
-            base_footer += f"\n> TrendRadar New version found **{update_info['remote_version']}**，current **{update_info['current_version']}**"
-    elif format_type == "feishu":
-        base_footer = f"\n\n<font color='grey'>Update time: {now.strftime('%Y-%m-%d %H:%M:%S')}</font>"
-        if update_info:
-            base_footer += f"\n<font color='grey'>TrendRadar New version found {update_info['remote_version']}，current {update_info['current_version']}</font>"
-    elif format_type == "dingtalk":
-        base_footer = f"\n\n> Update time: {now.strftime('%Y-%m-%d %H:%M:%S')}"
-        if update_info:
-            base_footer += f"\n> TrendRadar New version found **{update_info['remote_version']}**，current **{update_info['current_version']}**"
+    # ntfy format
+    base_header = f"**Total news:** {total_titles}\n\n"
+    
+    base_footer = f"\n\n> Update time: {now.strftime('%Y-%m-%d %H:%M:%S')}"
+    if update_info:
+        base_footer += f"\n> TrendRadar New version found **{update_info['remote_version']}**，current **{update_info['current_version']}**"
 
     stats_header = ""
     if report_data["stats"]:
-        if format_type == "wework":
-            stats_header = f"📊 **Trending Keywords Statistics**\n\n"
-        elif format_type == "telegram":
-            stats_header = f"📊 Trending Keywords Statistics\n\n"
-        elif format_type == "ntfy":
-            stats_header = f"📊 **Trending Keywords Statistics**\n\n"
-        elif format_type == "feishu":
-            stats_header = f"📊 **Trending Keywords Statistics**\n\n"
-        elif format_type == "dingtalk":
-            stats_header = f"📊 **Trending Keywords Statistics**\n\n"
+        stats_header = f"📊 **Trending Keywords Statistics**\n\n"
 
     current_batch = base_header
     current_batch_has_content = False
@@ -2976,81 +2617,26 @@ def split_content_into_batches(
             sequence_display = f"[{i + 1}/{total_count}]"
 
             # Build word group title
+            # ntfy format
             word_header = ""
-            if format_type == "wework":
-                if count >= 10:
-                    word_header = (
-                        f"🔥 {sequence_display} **{word}** : **{count}** items\n\n"
-                    )
-                elif count >= 5:
-                    word_header = (
-                        f"📈 {sequence_display} **{word}** : **{count}** items\n\n"
-                    )
-                else:
-                    word_header = f"📌 {sequence_display} **{word}** : {count} items\n\n"
-            elif format_type == "telegram":
-                if count >= 10:
-                    word_header = f"🔥 {sequence_display} {word} : {count} items\n\n"
-                elif count >= 5:
-                    word_header = f"📈 {sequence_display} {word} : {count} items\n\n"
-                else:
-                    word_header = f"📌 {sequence_display} {word} : {count} items\n\n"
-            elif format_type == "ntfy":
-                if count >= 10:
-                    word_header = (
-                        f"🔥 {sequence_display} **{word}** : **{count}** items\n\n"
-                    )
-                elif count >= 5:
-                    word_header = (
-                        f"📈 {sequence_display} **{word}** : **{count}** items\n\n"
-                    )
-                else:
-                    word_header = f"📌 {sequence_display} **{word}** : {count} items\n\n"
-            elif format_type == "feishu":
-                if count >= 10:
-                    word_header = f"🔥 <font color='grey'>{sequence_display}</font> **{word}** : <font color='red'>{count}</font> items\n\n"
-                elif count >= 5:
-                    word_header = f"📈 <font color='grey'>{sequence_display}</font> **{word}** : <font color='orange'>{count}</font> items\n\n"
-                else:
-                    word_header = f"📌 <font color='grey'>{sequence_display}</font> **{word}** : {count} items\n\n"
-            elif format_type == "dingtalk":
-                if count >= 10:
-                    word_header = (
-                        f"🔥 {sequence_display} **{word}** : **{count}** items\n\n"
-                    )
-                elif count >= 5:
-                    word_header = (
-                        f"📈 {sequence_display} **{word}** : **{count}** items\n\n"
-                    )
-                else:
-                    word_header = f"📌 {sequence_display} **{word}** : {count} items\n\n"
+            if count >= 10:
+                word_header = (
+                    f"🔥 {sequence_display} **{word}** : **{count}** items\n\n"
+                )
+            elif count >= 5:
+                word_header = (
+                    f"📈 {sequence_display} **{word}** : **{count}** items\n\n"
+                )
+            else:
+                word_header = f"📌 {sequence_display} **{word}** : {count} items\n\n"
 
-            # Build one news item
+            # Build one news item (ntfy format)
             first_news_line = ""
             if stat["titles"]:
                 first_title_data = stat["titles"][0]
-                if format_type == "wework":
-                    formatted_title = format_title_for_platform(
-                        "wework", first_title_data, show_source=True
-                    )
-                elif format_type == "telegram":
-                    formatted_title = format_title_for_platform(
-                        "telegram", first_title_data, show_source=True
-                    )
-                elif format_type == "ntfy":
-                    formatted_title = format_title_for_platform(
-                        "ntfy", first_title_data, show_source=True
-                    )
-                elif format_type == "feishu":
-                    formatted_title = format_title_for_platform(
-                        "feishu", first_title_data, show_source=True
-                    )
-                elif format_type == "dingtalk":
-                    formatted_title = format_title_for_platform(
-                        "dingtalk", first_title_data, show_source=True
-                    )
-                else:
-                    formatted_title = f"{first_title_data['title']}"
+                formatted_title = format_title_for_platform(
+                    "ntfy", first_title_data, show_source=True
+                )
 
                 first_news_line = f"  1. {formatted_title}\n"
                 if len(stat["titles"]) > 1:
@@ -3075,31 +2661,12 @@ def split_content_into_batches(
                 current_batch_has_content = True
                 start_index = 1
 
-            # Process remaining news items
+            # Process remaining news items (ntfy format)
             for j in range(start_index, len(stat["titles"])):
                 title_data = stat["titles"][j]
-                if format_type == "wework":
-                    formatted_title = format_title_for_platform(
-                        "wework", title_data, show_source=True
-                    )
-                elif format_type == "telegram":
-                    formatted_title = format_title_for_platform(
-                        "telegram", title_data, show_source=True
-                    )
-                elif format_type == "ntfy":
-                    formatted_title = format_title_for_platform(
-                        "ntfy", title_data, show_source=True
-                    )
-                elif format_type == "feishu":
-                    formatted_title = format_title_for_platform(
-                        "feishu", title_data, show_source=True
-                    )
-                elif format_type == "dingtalk":
-                    formatted_title = format_title_for_platform(
-                        "dingtalk", title_data, show_source=True
-                    )
-                else:
-                    formatted_title = f"{title_data['title']}"
+                formatted_title = format_title_for_platform(
+                    "ntfy", title_data, show_source=True
+                )
 
                 news_line = f"  {j + 1}. {formatted_title}\n"
                 if j < len(stat["titles"]) - 1:
@@ -3118,19 +2685,9 @@ def split_content_into_batches(
                     current_batch = test_content
                     current_batch_has_content = True
 
-            # Separator between word groups
+            # Separator between word groups (ntfy format)
             if i < len(report_data["stats"]) - 1:
-                separator = ""
-                if format_type == "wework":
-                    separator = f"\n\n\n\n"
-                elif format_type == "telegram":
-                    separator = f"\n\n"
-                elif format_type == "ntfy":
-                    separator = f"\n\n"
-                elif format_type == "feishu":
-                    separator = f"\n{CONFIG['FEISHU_MESSAGE_SEPARATOR']}\n\n"
-                elif format_type == "dingtalk":
-                    separator = f"\n---\n\n"
+                separator = f"\n\n"
 
                 test_content = current_batch + separator
                 if (
@@ -3139,21 +2696,9 @@ def split_content_into_batches(
                 ):
                     current_batch = test_content
 
-    # Process new news (also ensure source title + one atomic news item)
+    # Process new news (also ensure source title + one atomic news item, ntfy format)
     if report_data["new_titles"]:
-        new_header = ""
-        if format_type == "wework":
-            new_header = f"\n\n\n\n🆕 **New Trending News** (Total {report_data['total_new_count']} items)\n\n"
-        elif format_type == "telegram":
-            new_header = (
-                f"\n\n🆕 New Trending News (Total {report_data['total_new_count']} items)\n\n"
-            )
-        elif format_type == "ntfy":
-            new_header = f"\n\n🆕 **New Trending News** (Total {report_data['total_new_count']} items)\n\n"
-        elif format_type == "feishu":
-            new_header = f"\n{CONFIG['FEISHU_MESSAGE_SEPARATOR']}\n\n🆕 **New Trending News** (Total {report_data['total_new_count']} items)\n\n"
-        elif format_type == "dingtalk":
-            new_header = f"\n---\n\n🆕 **New Trending News** (Total {report_data['total_new_count']} items)\n\n"
+        new_header = f"\n\n🆕 **New Trending News** (Total {report_data['total_new_count']} items)\n\n"
 
         test_content = current_batch + new_header
         if (
@@ -3168,19 +2713,9 @@ def split_content_into_batches(
             current_batch = test_content
             current_batch_has_content = True
 
-        # Process new news source one by one
+        # Process new news source one by one (ntfy format)
         for source_data in report_data["new_titles"]:
-            source_header = ""
-            if format_type == "wework":
-                source_header = f"**{source_data['source_name']}** ({len(source_data['titles'])} items):\n\n"
-            elif format_type == "telegram":
-                source_header = f"{source_data['source_name']} ({len(source_data['titles'])} items):\n\n"
-            elif format_type == "ntfy":
-                source_header = f"**{source_data['source_name']}** ({len(source_data['titles'])} items):\n\n"
-            elif format_type == "feishu":
-                source_header = f"**{source_data['source_name']}** ({len(source_data['titles'])} items):\n\n"
-            elif format_type == "dingtalk":
-                source_header = f"**{source_data['source_name']}** ({len(source_data['titles'])} items):\n\n"
+            source_header = f"**{source_data['source_name']}** ({len(source_data['titles'])} items):\n\n"
 
             # Build one new news item
             first_news_line = ""
@@ -3189,24 +2724,9 @@ def split_content_into_batches(
                 title_data_copy = first_title_data.copy()
                 title_data_copy["is_new"] = False
 
-                if format_type == "wework":
-                    formatted_title = format_title_for_platform(
-                        "wework", title_data_copy, show_source=False
-                    )
-                elif format_type == "telegram":
-                    formatted_title = format_title_for_platform(
-                        "telegram", title_data_copy, show_source=False
-                    )
-                elif format_type == "feishu":
-                    formatted_title = format_title_for_platform(
-                        "feishu", title_data_copy, show_source=False
-                    )
-                elif format_type == "dingtalk":
-                    formatted_title = format_title_for_platform(
-                        "dingtalk", title_data_copy, show_source=False
-                    )
-                else:
-                    formatted_title = f"{title_data_copy['title']}"
+                formatted_title = format_title_for_platform(
+                    "ntfy", title_data_copy, show_source=False
+                )
 
                 first_news_line = f"  1. {formatted_title}\n"
 
@@ -3228,30 +2748,15 @@ def split_content_into_batches(
                 current_batch_has_content = True
                 start_index = 1
 
-            # Process remaining new news
+            # Process remaining new news (ntfy format)
             for j in range(start_index, len(source_data["titles"])):
                 title_data = source_data["titles"][j]
                 title_data_copy = title_data.copy()
                 title_data_copy["is_new"] = False
 
-                if format_type == "wework":
-                    formatted_title = format_title_for_platform(
-                        "wework", title_data_copy, show_source=False
-                    )
-                elif format_type == "telegram":
-                    formatted_title = format_title_for_platform(
-                        "telegram", title_data_copy, show_source=False
-                    )
-                elif format_type == "feishu":
-                    formatted_title = format_title_for_platform(
-                        "feishu", title_data_copy, show_source=False
-                    )
-                elif format_type == "dingtalk":
-                    formatted_title = format_title_for_platform(
-                        "dingtalk", title_data_copy, show_source=False
-                    )
-                else:
-                    formatted_title = f"{title_data_copy['title']}"
+                formatted_title = format_title_for_platform(
+                    "ntfy", title_data_copy, show_source=False
+                )
 
                 news_line = f"  {j + 1}. {formatted_title}\n"
 
@@ -3270,18 +2775,9 @@ def split_content_into_batches(
 
             current_batch += "\n"
 
+    # Failed platforms section (ntfy format)
     if report_data["failed_ids"]:
-        failed_header = ""
-        if format_type == "wework":
-            failed_header = f"\n\n\n\n⚠️ **Failed to fetch data from platforms:**\n\n"
-        elif format_type == "telegram":
-            failed_header = f"\n\n⚠️ Failed to fetch data from platforms:\n\n"
-        elif format_type == "ntfy":
-            failed_header = f"\n\n⚠️ **Failed to fetch data from platforms:**\n\n"
-        elif format_type == "feishu":
-            failed_header = f"\n{CONFIG['FEISHU_MESSAGE_SEPARATOR']}\n\n⚠️ **Failed to fetch data from platforms:**\n\n"
-        elif format_type == "dingtalk":
-            failed_header = f"\n---\n\n⚠️ **Failed to fetch data from platforms:**\n\n"
+        failed_header = f"\n\n⚠️ **Failed to fetch data from platforms:**\n\n"
 
         test_content = current_batch + failed_header
         if (
@@ -3297,12 +2793,7 @@ def split_content_into_batches(
             current_batch_has_content = True
 
         for i, id_value in enumerate(report_data["failed_ids"], 1):
-            if format_type == "feishu":
-                failed_line = f"  • <font color='red'>{id_value}</font>\n"
-            elif format_type == "dingtalk":
-                failed_line = f"  • **{id_value}**\n"
-            else:
-                failed_line = f"  • {id_value}\n"
+            failed_line = f"  • {id_value}\n"
 
             test_content = current_batch + failed_line
             if (
@@ -3359,11 +2850,6 @@ def send_to_notifications(
 
     report_data = prepare_report_data(stats, failed_ids, new_titles, id_to_name, mode)
 
-    feishu_url = CONFIG["FEISHU_WEBHOOK_URL"]
-    dingtalk_url = CONFIG["DINGTALK_WEBHOOK_URL"]
-    wework_url = CONFIG["WEWORK_WEBHOOK_URL"]
-    telegram_token = CONFIG["TELEGRAM_BOT_TOKEN"]
-    telegram_chat_id = CONFIG["TELEGRAM_CHAT_ID"]
     email_from = CONFIG["EMAIL_FROM"]
     email_password = CONFIG["EMAIL_PASSWORD"]
     email_to = CONFIG["EMAIL_TO"]
@@ -3374,36 +2860,6 @@ def send_to_notifications(
     ntfy_token = CONFIG.get("NTFY_TOKEN", "")
 
     update_info_to_send = update_info if CONFIG["SHOW_VERSION_UPDATE"] else None
-
-    # Send to Feishu
-    if feishu_url:
-        results["feishu"] = send_to_feishu(
-            feishu_url, report_data, report_type, update_info_to_send, proxy_url, mode
-        )
-
-    # Send to DingTalk
-    if dingtalk_url:
-        results["dingtalk"] = send_to_dingtalk(
-            dingtalk_url, report_data, report_type, update_info_to_send, proxy_url, mode
-        )
-
-    # Send to WeWork
-    if wework_url:
-        results["wework"] = send_to_wework(
-            wework_url, report_data, report_type, update_info_to_send, proxy_url, mode
-        )
-
-    # Send to Telegram
-    if telegram_token and telegram_chat_id:
-        results["telegram"] = send_to_telegram(
-            telegram_token,
-            telegram_chat_id,
-            report_data,
-            report_type,
-            update_info_to_send,
-            proxy_url,
-            mode,
-        )
 
     # Send to ntfy
     if ntfy_server_url and ntfy_topic:
@@ -3443,311 +2899,6 @@ def send_to_notifications(
         push_manager.record_push(report_type)
 
     return results
-
-
-def send_to_feishu(
-    webhook_url: str,
-    report_data: Dict,
-    report_type: str,
-    update_info: Optional[Dict] = None,
-    proxy_url: Optional[str] = None,
-    mode: str = "daily",
-) -> bool:
-    """Send to Feishu (supports batch sending)"""
-    headers = {"Content-Type": "application/json"}
-    proxies = None
-    if proxy_url:
-        proxies = {"http": proxy_url, "https": proxy_url}
-
-    # Get batch content, use Feishu dedicated batch size
-    batches = split_content_into_batches(
-        report_data,
-        "feishu",
-        update_info,
-        max_bytes=CONFIG.get("FEISHU_BATCH_SIZE", 29000),
-        mode=mode,
-    )
-
-    print(f"Feishu message split into {len(batches)} batches for sending [{report_type}]")
-
-    # Send batch by batch
-    for i, batch_content in enumerate(batches, 1):
-        batch_size = len(batch_content.encode("utf-8"))
-        print(
-            f"Sending Feishu batch {i}/{len(batches)}, size: {batch_size} bytes [{report_type}]"
-        )
-
-        # Add batch identifier
-        if len(batches) > 1:
-            batch_header = f"**[Batch {i}/{len(batches)}]**\n\n"
-            # Insert batch identifier at appropriate position (after statistics title)
-            if "📊 **Trending Keywords Statistics**" in batch_content:
-                batch_content = batch_content.replace(
-                    "📊 **Trending Keywords Statistics**\n\n", f"📊 **Trending Keywords Statistics** {batch_header}"
-                )
-            else:
-                # If no statistics title，Add directly at beginning
-                batch_content = batch_header + batch_content
-
-        total_titles = sum(
-            len(stat["titles"]) for stat in report_data["stats"] if stat["count"] > 0
-        )
-        now = get_beijing_time()
-
-        payload = {
-            "msg_type": "text",
-            "content": {
-                "total_titles": total_titles,
-                "timestamp": now.strftime("%Y-%m-%d %H:%M:%S"),
-                "report_type": report_type,
-                "text": batch_content,
-            },
-        }
-
-        try:
-            response = requests.post(
-                webhook_url, headers=headers, json=payload, proxies=proxies, timeout=30
-            )
-            if response.status_code == 200:
-                result = response.json()
-                # Check Feishu response status
-                if result.get("StatusCode") == 0 or result.get("code") == 0:
-                    print(f"Feishu batch {i}/{len(batches)} sent successfully [{report_type}]")
-                    # Interval between batches
-                    if i < len(batches):
-                        time.sleep(CONFIG["BATCH_SEND_INTERVAL"])
-                else:
-                    error_msg = result.get("msg") or result.get("StatusMessage", "unknown error")
-                    print(
-                        f"Feishu batch {i}/{len(batches)} sending failed [{report_type}], error: {error_msg}"
-                    )
-                    return False
-            else:
-                print(
-                    f"Feishu batch {i}/{len(batches)} sending failed [{report_type}], status code: {response.status_code}"
-                )
-                return False
-        except Exception as e:
-            print(f"Feishu batch {i}/{len(batches)} sending error [{report_type}]: {e}")
-            return False
-
-    print(f"Feishu all {len(batches)} batches sent successfully [{report_type}]")
-    return True
-
-
-def send_to_dingtalk(
-    webhook_url: str,
-    report_data: Dict,
-    report_type: str,
-    update_info: Optional[Dict] = None,
-    proxy_url: Optional[str] = None,
-    mode: str = "daily",
-) -> bool:
-    """Send to DingTalk (supports batch sending)"""
-    headers = {"Content-Type": "application/json"}
-    proxies = None
-    if proxy_url:
-        proxies = {"http": proxy_url, "https": proxy_url}
-
-    # Get batch content, use DingTalk dedicated batch size
-    batches = split_content_into_batches(
-        report_data,
-        "dingtalk",
-        update_info,
-        max_bytes=CONFIG.get("DINGTALK_BATCH_SIZE", 20000),
-        mode=mode,
-    )
-
-    print(f"DingTalk message split into {len(batches)} batches for sending [{report_type}]")
-
-    # Send batch by batch
-    for i, batch_content in enumerate(batches, 1):
-        batch_size = len(batch_content.encode("utf-8"))
-        print(
-            f"Sending DingTalk batch {i}/{len(batches)}, size: {batch_size} bytes [{report_type}]"
-        )
-
-        # Add batch identifier
-        if len(batches) > 1:
-            batch_header = f"**[Batch {i}/{len(batches)}]**\n\n"
-            # Insert batch identifier at appropriate position (after title)
-            if "📊 **Trending Keywords Statistics**" in batch_content:
-                batch_content = batch_content.replace(
-                    "📊 **Trending Keywords Statistics**\n\n", f"📊 **Trending Keywords Statistics** {batch_header}\n\n"
-                )
-            else:
-                # If no statistics title，Add directly at beginning
-                batch_content = batch_header + batch_content
-
-        payload = {
-            "msgtype": "markdown",
-            "markdown": {
-                "title": f"TrendRadar Trending Analysis Report - {report_type}",
-                "text": batch_content,
-            },
-        }
-
-        try:
-            response = requests.post(
-                webhook_url, headers=headers, json=payload, proxies=proxies, timeout=30
-            )
-            if response.status_code == 200:
-                result = response.json()
-                if result.get("errcode") == 0:
-                    print(f"DingTalk batch {i}/{len(batches)} sent successfully [{report_type}]")
-                    # Interval between batches
-                    if i < len(batches):
-                        time.sleep(CONFIG["BATCH_SEND_INTERVAL"])
-                else:
-                    print(
-                        f"DingTalk batch {i}/{len(batches)} sending failed [{report_type}], error: {result.get('errmsg')}"
-                    )
-                    return False
-            else:
-                print(
-                    f"DingTalk batch {i}/{len(batches)} sending failed [{report_type}], status code: {response.status_code}"
-                )
-                return False
-        except Exception as e:
-            print(f"DingTalk batch {i}/{len(batches)} sending error [{report_type}]: {e}")
-            return False
-
-    print(f"DingTalk all {len(batches)} batches sent successfully [{report_type}]")
-    return True
-
-
-def send_to_wework(
-    webhook_url: str,
-    report_data: Dict,
-    report_type: str,
-    update_info: Optional[Dict] = None,
-    proxy_url: Optional[str] = None,
-    mode: str = "daily",
-) -> bool:
-    """Send to WeWork (supports batch sending)"""
-    headers = {"Content-Type": "application/json"}
-    proxies = None
-    if proxy_url:
-        proxies = {"http": proxy_url, "https": proxy_url}
-
-    # Get batch content
-    batches = split_content_into_batches(report_data, "wework", update_info, mode=mode)
-
-    print(f"WeWork message split into {len(batches)} batches for sending [{report_type}]")
-
-    # Send batch by batch
-    for i, batch_content in enumerate(batches, 1):
-        batch_size = len(batch_content.encode("utf-8"))
-        print(
-            f"Sending WeWork batch {i}/{len(batches)}, size: {batch_size} bytes [{report_type}]"
-        )
-
-        # Add batch identifier
-        if len(batches) > 1:
-            batch_header = f"**[Batch {i}/{len(batches)}]**\n\n"
-            batch_content = batch_header + batch_content
-
-        payload = {"msgtype": "markdown", "markdown": {"content": batch_content}}
-
-        try:
-            response = requests.post(
-                webhook_url, headers=headers, json=payload, proxies=proxies, timeout=30
-            )
-            if response.status_code == 200:
-                result = response.json()
-                if result.get("errcode") == 0:
-                    print(f"WeWork batch {i}/{len(batches)} sent successfully [{report_type}]")
-                    # Interval between batches
-                    if i < len(batches):
-                        time.sleep(CONFIG["BATCH_SEND_INTERVAL"])
-                else:
-                    print(
-                        f"WeWork batch {i}/{len(batches)} sending failed [{report_type}], error: {result.get('errmsg')}"
-                    )
-                    return False
-            else:
-                print(
-                    f"WeWork batch {i}/{len(batches)} sending failed [{report_type}], status code: {response.status_code}"
-                )
-                return False
-        except Exception as e:
-            print(f"WeWork batch {i}/{len(batches)} sending error [{report_type}]: {e}")
-            return False
-
-    print(f"WeWork all {len(batches)} batches sent successfully [{report_type}]")
-    return True
-
-
-def send_to_telegram(
-    bot_token: str,
-    chat_id: str,
-    report_data: Dict,
-    report_type: str,
-    update_info: Optional[Dict] = None,
-    proxy_url: Optional[str] = None,
-    mode: str = "daily",
-) -> bool:
-    """Send to Telegram (supports batch sending)"""
-    headers = {"Content-Type": "application/json"}
-    url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
-
-    proxies = None
-    if proxy_url:
-        proxies = {"http": proxy_url, "https": proxy_url}
-
-    # Get batch content
-    batches = split_content_into_batches(
-        report_data, "telegram", update_info, mode=mode
-    )
-
-    print(f"Telegram message split into {len(batches)} batches for sending [{report_type}]")
-
-    # Send batch by batch
-    for i, batch_content in enumerate(batches, 1):
-        batch_size = len(batch_content.encode("utf-8"))
-        print(
-            f"Sending Telegram batch {i}/{len(batches)}, size: {batch_size} bytes [{report_type}]"
-        )
-
-        # Add batch identifier
-        if len(batches) > 1:
-            batch_header = f"<b>[Batch {i}/{len(batches)}]</b>\n\n"
-            batch_content = batch_header + batch_content
-
-        payload = {
-            "chat_id": chat_id,
-            "text": batch_content,
-            "parse_mode": "HTML",
-            "disable_web_page_preview": True,
-        }
-
-        try:
-            response = requests.post(
-                url, headers=headers, json=payload, proxies=proxies, timeout=30
-            )
-            if response.status_code == 200:
-                result = response.json()
-                if result.get("ok"):
-                    print(f"Telegram batch {i}/{len(batches)} sent successfully [{report_type}]")
-                    # Interval between batches
-                    if i < len(batches):
-                        time.sleep(CONFIG["BATCH_SEND_INTERVAL"])
-                else:
-                    print(
-                        f"Telegram batch {i}/{len(batches)} sending failed [{report_type}], error: {result.get('description')}"
-                    )
-                    return False
-            else:
-                print(
-                    f"Telegram batch {i}/{len(batches)} sending failed [{report_type}], status code: {response.status_code}"
-                )
-                return False
-        except Exception as e:
-            print(f"Telegram batch {i}/{len(batches)} sending error [{report_type}]: {e}")
-            return False
-
-    print(f"Telegram all {len(batches)} batches sent successfully [{report_type}]")
-    return True
 
 
 def send_to_email(
@@ -4142,10 +3293,6 @@ class NewsAnalyzer:
         """Check if any notification channels configured"""
         return any(
             [
-                CONFIG["FEISHU_WEBHOOK_URL"],
-                CONFIG["DINGTALK_WEBHOOK_URL"],
-                CONFIG["WEWORK_WEBHOOK_URL"],
-                (CONFIG["TELEGRAM_BOT_TOKEN"] and CONFIG["TELEGRAM_CHAT_ID"]),
                 (
                     CONFIG["EMAIL_FROM"]
                     and CONFIG["EMAIL_PASSWORD"]

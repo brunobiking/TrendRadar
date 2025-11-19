@@ -31,10 +31,7 @@ report:
 notification:
   enable_notification: true # Whether to enable notification. If false, no mobile notifications will be sent
   message_batch_size: 4000 # Message batch size (bytes) (don't modify this config)
-  dingtalk_batch_size: 20000 # DingTalk message batch size (bytes) (don't modify this config either)
-  feishu_batch_size: 29000 # Feishu message batch size (bytes)
   batch_send_interval: 3 # Batch send interval (seconds)
-  feishu_message_separator: "━━━━━━━━━━━━━━━━━━━" # Feishu message separator line
 
   # 🕐 Push Time Window Control (Optional Feature)
   # Purpose: Limit the time range for push notifications to avoid disturbances during non-work hours
@@ -55,11 +52,6 @@ notification:
   # If you deploy this project on GitHub via fork, do NOT fill in any webhooks here. Instead, put webhooks in GitHub Secret
   # Otherwise, at best you'll receive strange ads on your phone, at worst there are more serious security risks
   webhooks:
-    feishu_url: "" # Feishu bot webhook URL
-    dingtalk_url: "" # DingTalk bot webhook URL
-    wework_url: "" # WeWork (Enterprise WeChat) bot webhook URL
-    telegram_bot_token: "" # Telegram Bot Token
-    telegram_chat_id: "" # Telegram Chat ID
     email_from: "" # Sender email address
     email_password: "" # Sender email password or authorization code
     email_to: "" # Recipient email address, multiple recipients separated by commas
