@@ -67,43 +67,6 @@ GitHub Secrets store your sensitive credentials securely.
 
 **⚠️ Important**: Secret names are **case-sensitive** and must match exactly!
 
-##### Telegram Bot
-| Secret Name | Description | Example |
-|-------------|-------------|---------|
-| `TELEGRAM_BOT_TOKEN` | Bot token from @BotFather | `123456789:AAHfiqksKZ8...` |
-| `TELEGRAM_CHAT_ID` | Your chat ID | `987654321` |
-
-**Setup guide**: [Configuration - Telegram Bot](CONFIGURATION.md#telegram-bot)
-
----
-
-##### WeWork Bot
-| Secret Name | Description | Example |
-|-------------|-------------|---------|
-| `WEWORK_WEBHOOK_URL` | Webhook from group settings | `https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=...` |
-
-**Setup guide**: [Configuration - WeWork Bot](CONFIGURATION.md#wework-bot)
-
----
-
-##### Feishu Bot
-| Secret Name | Description | Example |
-|-------------|-------------|---------|
-| `FEISHU_WEBHOOK_URL` | Webhook from bot builder | `https://www.feishu.cn/flow/api/trigger-webhook/...` |
-
-**Setup guide**: [Configuration - Feishu Bot](CONFIGURATION.md#feishu-bot)
-
----
-
-##### DingTalk Bot
-| Secret Name | Description | Example |
-|-------------|-------------|---------|
-| `DINGTALK_WEBHOOK_URL` | Webhook from custom bot | `https://oapi.dingtalk.com/robot/send?access_token=...` |
-
-**Setup guide**: [Configuration - DingTalk Bot](CONFIGURATION.md#dingtalk-bot)
-
----
-
 ##### Email Notification
 | Secret Name | Description | Example |
 |-------------|-------------|---------|
