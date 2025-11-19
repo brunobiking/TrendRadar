@@ -95,8 +95,8 @@ GitHub Secrets store your sensitive credentials securely.
 
 For each secret:
 1. Click **"New repository secret"**
-2. Enter the **Name** (e.g., `TELEGRAM_BOT_TOKEN`)
-3. Enter the **Secret** value (your actual token/URL)
+2. Enter the **Name** (e.g., `EMAIL_FROM` or `NTFY_TOPIC`)
+3. Enter the **Secret** value (your actual email/topic)
 4. Click **"Add secret"**
 
 **Screenshot reference location**: ![Adding Secret](images/add-secret.png)
@@ -258,7 +258,7 @@ Get a beautiful web interface for your news reports!
 **Debug command**: Add this to workflow for testing:
 ```yaml
 - name: Test notification
-  run: echo "Testing with TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}"
+  run: echo "Testing with EMAIL=${{ secrets.EMAIL_FROM }} TOPIC=${{ secrets.NTFY_TOPIC }}"
 ```
 </details>
 
@@ -313,7 +313,10 @@ docker run -d \
   --name trend-radar \
   -v ./config:/app/config:ro \
   -v ./output:/app/output \
-  -e FEISHU_WEBHOOK_URL="your_webhook_url" \
+  -e EMAIL_FROM="your_email@example.com" \
+  -e EMAIL_PASSWORD="your_app_password" \
+  -e EMAIL_TO="recipient@example.com" \
+  -e NTFY_TOPIC="your_topic" \
   -e CRON_SCHEDULE="*/30 * * * *" \
   -e RUN_MODE="cron" \
   -e IMMEDIATE_RUN="true" \
@@ -363,15 +366,10 @@ PUSH_WINDOW_START=08:00
 PUSH_WINDOW_END=22:00
 
 # Notification Channels (Fill at least one)
-FEISHU_WEBHOOK_URL=https://your-feishu-webhook
-TELEGRAM_BOT_TOKEN=123456789:AAHfiqk...
-TELEGRAM_CHAT_ID=987654321
-DINGTALK_WEBHOOK_URL=
-WEWORK_WEBHOOK_URL=
-EMAIL_FROM=
-EMAIL_PASSWORD=
-EMAIL_TO=
-NTFY_TOPIC=
+EMAIL_FROM=your_email@example.com
+EMAIL_PASSWORD=your_app_password
+EMAIL_TO=recipient@example.com
+NTFY_TOPIC=your_topic
 
 # Schedule
 CRON_SCHEDULE=*/30 * * * *
