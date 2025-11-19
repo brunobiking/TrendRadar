@@ -1,0 +1,509 @@
+# =============================================================================
+# TrendRadar Keyword Configuration Examples
+# =============================================================================
+#
+# This file demonstrates various keyword filtering patterns for different use cases.
+# Choose a template below that matches your interests, or mix and match!
+#
+# SYNTAX:
+#   Normal keywords   - Match ANY of these words
+#   +required         - Must include (along with a normal keyword)
+#   !filter           - Exclude if present
+#   Empty line        - Separates groups (each group is ranked independently)
+#
+# =============================================================================
+
+# =============================================================================
+# EXAMPLE 1: TECH INVESTOR
+# =============================================================================
+# Monitor major tech companies, product launches, and stock movements
+
+# --- Group 1: Major Tech Companies ---
+Apple
+Microsoft
+Google
+Amazon
+Meta
+Tesla
+NVIDIA
+AMD
+Intel
+
+# --- Group 2: Tech Product Launches ---
+iPhone
+iPad
+Mac
+Android
+Windows
+Surface
+Pixel
++launch
++release
++announcement
+!rumor
+!leak
+
+# --- Group 3: Stock Market ---
+AAPL
+MSFT
+GOOGL
+AMZN
+TSLA
+NVDA
++stock
++earnings
++revenue
+!prediction
+!analyst
+
+# --- Group 4: AI Industry ---
+AI
+Artificial Intelligence
+ChatGPT
+Claude
+Gemini
+OpenAI
+Anthropic
++breakthrough
++release
+!tutorial
+!course
+
+
+# =============================================================================
+# EXAMPLE 2: CONTENT CREATOR
+# =============================================================================
+# Find viral topics and trending content ideas
+
+# --- Group 1: Viral Topics ---
+trending
+viral
+popular
+hot topic
++social media
++video
+!advertisement
+
+# --- Group 2: Platform Trends ---
+TikTok
+Instagram
+YouTube
+Twitter
+Facebook
++trend
++challenge
+!scam
+
+# --- Group 3: Entertainment Launches ---
+Netflix
+Disney
+HBO
+Apple TV
++series
++movie
++season
+!renewal
+!cancelled
+!rumor
+
+# --- Group 4: Gaming ---
+PlayStation
+Xbox
+Nintendo
+Steam
++game
++release
++update
+!mobile
+
+
+# =============================================================================
+# EXAMPLE 3: CRYPTO TRADER
+# =============================================================================
+# Track cryptocurrency news and market movements
+
+# --- Group 1: Major Cryptocurrencies ---
+Bitcoin
+BTC
+Ethereum
+ETH
+Solana
+SOL
++price
++surge
++drop
+!scam
+!prediction
+
+# --- Group 2: Crypto Exchanges ---
+Coinbase
+Binance
+Kraken
+FTX
++hack
++regulation
++listing
+
+# --- Group 3: DeFi & NFT ---
+DeFi
+NFT
+Uniswap
+OpenSea
++launch
++volume
+!advertisement
+
+# --- Group 4: Crypto Regulations ---
+SEC
+cryptocurrency
+regulation
+Bitcoin ETF
++approval
++rejection
+!rumor
+
+
+# =============================================================================
+# EXAMPLE 4: SPORTS FAN
+# =============================================================================
+# Follow major sporting events and athlete news
+
+# --- Group 1: Football/Soccer ---
+World Cup
+Champions League
+Premier League
+Messi
+Ronaldo
++match
++goal
++transfer
+!rumor
+!betting
+
+# --- Group 2: Basketball ---
+NBA
+LeBron
+Curry
+Lakers
+Warriors
++game
++playoffs
++championship
+
+# --- Group 3: Olympics ---
+Olympics
+Olympic Games
++medal
++record
++gold
+
+# --- Group 4: Tennis ---
+Wimbledon
+US Open
+Federer
+Nadal
+Djokovic
++match
++tournament
+
+
+# =============================================================================
+# EXAMPLE 5: BUSINESS NEWS ENTHUSIAST
+# =============================================================================
+# Track major business developments and economic news
+
+# --- Group 1: Major Companies ---
+Apple
+Google
+Amazon
+Microsoft
+Tesla
++acquisition
++merger
++CEO
+!rumor
+
+# --- Group 2: Stock Market ---
+Dow Jones
+S&P 500
+Nasdaq
+stock market
++surge
++crash
++close
+!prediction
+
+# --- Group 3: Economic Indicators ---
+inflation
+unemployment
+GDP
+Federal Reserve
+interest rate
++data
++report
++announcement
+
+# --- Group 4: Tech IPOs ---
+IPO
+initial public offering
+startup
++valuation
++listing
+
+
+# =============================================================================
+# EXAMPLE 6: CHINESE NEWS MONITOR
+# =============================================================================
+# 关注中文新闻和热点话题
+
+# --- 分组 1: 科技公司 ---
+华为
+小米
+OPPO
+vivo
+比亚迪
++发布
++新品
+!广告
+
+# --- 分组 2: 股市财经 ---
+A股
+上证指数
+深证指数
+创业板
++涨停
++跌停
+!预测
+
+# --- 分组 3: 娱乐八卦 ---
+明星
+电影
+电视剧
+综艺
++热搜
++爆料
+!营销
+!代言
+
+# --- 分组 4: 社会热点 ---
+政策
+教育
+医疗
+房价
++改革
++调整
+!谣言
+
+
+# =============================================================================
+# EXAMPLE 7: MINIMAL SETUP (BROAD MATCHING)
+# =============================================================================
+# Catch most major news without too many filters
+
+technology
+business
+science
+sports
+entertainment
+politics
++breaking
++major
+!advertisement
+!sponsored
+
+
+# =============================================================================
+# EXAMPLE 8: NICHE INTERESTS
+# =============================================================================
+# Monitor specific topics with precision
+
+# --- Group 1: Space Exploration ---
+SpaceX
+NASA
+Mars
+rocket
+satellite
++launch
++mission
+!concept
+
+# --- Group 2: Electric Vehicles ---
+Tesla
+BYD
+electric vehicle
+EV
++battery
++range
++sales
+!rumor
+
+# --- Group 3: Renewable Energy ---
+solar
+wind power
+renewable energy
++project
++capacity
+!investment
+
+# --- Group 4: AI Research ---
+AI research
+machine learning
+deep learning
+neural network
++paper
++breakthrough
+!tutorial
+
+
+# =============================================================================
+# EXAMPLE 9: VERY STRICT FILTERING
+# =============================================================================
+# Only highly relevant, verified news
+
+# --- Group 1: Product Launches Only ---
+Apple
+Samsung
+Google
++official
++launch
++announcement
+!leak
+!rumor
+!speculation
+!report
+
+# --- Group 2: Earnings Reports Only ---
+earnings
+quarterly results
++official
++report
+!estimate
+!expectation
+
+
+# =============================================================================
+# EXAMPLE 10: MULTIPLE INTERESTS (ADVANCED)
+# =============================================================================
+# Track several distinct topics with different requirements
+
+# --- Tech Launches ---
+iPhone
+iPad
+Android
++launch
++release
+
+# --- Stock Alerts ---
+AAPL
+GOOGL
+TSLA
++surge
++drop
+!prediction
+
+# --- AI News ---
+ChatGPT
+Claude
+Gemini
++update
++feature
+
+# --- Crypto Updates ---
+Bitcoin
+Ethereum
++price
++adoption
+
+# --- Gaming News ---
+PlayStation
+Xbox
+Nintendo
++exclusive
++release
+
+# --- Sports Highlights ---
+NBA
+World Cup
++final
++championship
+
+
+# =============================================================================
+# TIPS FOR CUSTOMIZATION
+# =============================================================================
+#
+# 1. START SIMPLE:
+#    Begin with 5-10 keywords, run for a few days, then refine
+#
+# 2. USE GROUPS:
+#    Separate different interests with empty lines for better organization
+#
+# 3. ADD FILTERS GRADUALLY:
+#    Only add !filters when you see unwanted content appearing
+#
+# 4. REQUIRED WORDS ARE POWERFUL:
+#    Use + to narrow scope (e.g., +launch limits to launch news only)
+#
+# 5. PRIORITY MATTERS:
+#    Put most important keywords at the top of each group
+#
+# 6. TEST AND ITERATE:
+#    Check your notifications for a week, adjust as needed
+#
+# 7. AVOID OVER-FILTERING:
+#    Too many filters = miss important news
+#
+# 8. CASE INSENSITIVE:
+#    "Apple" matches "apple", "APPLE", "Apple"
+#
+# 9. PARTIAL MATCHING:
+#    "phone" matches "smartphone", "iPhone", "telephone"
+#
+# 10. EMPTY FILE = ALL NEWS:
+#     Leaving file empty sends ALL trending news (very high volume!)
+#
+# =============================================================================
+
+# =============================================================================
+# QUICK TEMPLATES BY USER TYPE
+# =============================================================================
+
+# FOR QUICK COPY-PASTE, UNCOMMENT ONE OF THESE SECTIONS:
+
+# --- INVESTOR TEMPLATE ---
+# Apple
+# Microsoft
+# Google
+# Amazon
+# Tesla
+# NVIDIA
+# +stock
+# +earnings
+# !rumor
+
+# --- TECH ENTHUSIAST TEMPLATE ---
+# AI
+# ChatGPT
+# iPhone
+# Android
+# Tesla
+# SpaceX
+# +launch
+# +breakthrough
+# !advertisement
+
+# --- NEWS JUNKIE TEMPLATE ---
+# breaking
+# trending
+# major
+# important
+# significant
+# !advertisement
+# !sponsored
+
+# --- MINIMALIST TEMPLATE ---
+# news
+# today
+# trending
+
+# =============================================================================

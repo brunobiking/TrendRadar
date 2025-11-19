@@ -47,7 +47,7 @@
 | [🎯 Core Features](#-core-features) | [🚀 Quick Start](#-quick-start) | [🐳 Docker Deployment](#-docker-deployment) | [🤖 AI Analysis](#-ai-analysis-deployment) |
 |:---:|:---:|:---:|:---:|
 | [📝 Changelog](#-changelog) | [🔌 MCP Clients](#-mcp-clients) | [❓ FAQ & Support](#-faq--support) | [⭐ Related Projects](#-related-projects) |
-| [🔧 Custom Platforms](#custom-monitoring-platforms) | [📝 Keywords Config](#frequencywordstxt-configuration) | [🪄 Sponsors](#-sponsors) | |
+| [🔧 Custom Platforms](#custom-monitoring-platforms) | [📝 Keywords Config](#frequencywordstxt-configuration) | [📚 Documentation](#-documentation) | [🪄 Sponsors](#-sponsors) |
 
 </div>
 
@@ -100,6 +100,91 @@ This project uses the API from [newsnow](https://github.com/ourongxing/newsnow) 
 | ... | ... | ... | **(More 50+ supporters)** |
 
 </details>
+
+
+## 📚 Documentation
+
+Comprehensive guides to help you get started and make the most of TrendRadar:
+
+### 🚀 Getting Started
+
+- **[Quick Start Guide](docs/QUICKSTART.md)** ⏱️ *5-10 minutes*
+  - Fast track to your first notification
+  - Minimal setup with GitHub Actions
+  - Perfect for beginners
+
+- **[Installation Guide](docs/INSTALLATION.md)** ⏱️ *10-30 minutes*
+  - Detailed setup instructions for all methods
+  - Prerequisites and system requirements
+  - GitHub Fork, Local, and Docker installation
+
+- **[Deployment Guide](docs/DEPLOYMENT.md)** ⏱️ *10-30 minutes*
+  - GitHub Actions deployment (free hosting)
+  - Docker deployment (NAS, servers)
+  - Local deployment (scheduled execution)
+  - Comparison of all methods
+
+### ⚙️ Configuration
+
+- **[Configuration Guide](docs/CONFIGURATION.md)** ⏱️ *20-40 minutes*
+  - Core configuration (config.yaml)
+  - Notification channels setup (Telegram, Email, WeWork, Feishu, DingTalk, ntfy)
+  - Keyword filtering (frequency_words.txt)
+  - Report modes and push time windows
+  - Trending algorithm weights
+  - Platform configuration
+
+### 🔧 Reference
+
+- **[Troubleshooting Guide](docs/TROUBLESHOOTING.md)** ⏱️ *5-30 minutes*
+  - Common issues and solutions
+  - Platform-specific problems
+  - Debug steps and tools
+  - Error messages reference
+
+- **[API Reference](docs/API_REFERENCE.md)** ⏱️ *10 minutes*
+  - Python dependencies explained
+  - External services and APIs
+  - No API keys needed for core features
+  - Rate limits and best practices
+  - MCP protocol documentation
+
+### 📋 Examples
+
+- **[Example Configuration](docs/examples/config.example.yaml)**
+  - Fully commented config.yaml
+  - All options explained
+  - Common scenarios
+
+- **[Keyword Examples](docs/examples/frequency_words_examples.txt)**
+  - Templates for different use cases
+  - Tech investor, content creator, crypto trader, etc.
+  - Syntax demonstrations
+
+### 🗺️ Documentation Map
+
+```
+Start Here → Quick Start (5 min)
+              ↓
+          Installation (choose your method)
+              ↓
+          Configuration (set up notifications & keywords)
+              ↓
+          Deployment (run TrendRadar)
+              ↓
+          ✓ Success! News delivered to your device
+              ↓
+          Problems? → Troubleshooting Guide
+          Want details? → API Reference
+```
+
+### 💡 Tips
+
+- **New users**: Start with [Quick Start](docs/QUICKSTART.md)
+- **Setting up notifications**: See [Configuration - Notification Channels](docs/CONFIGURATION.md#notification-channels-setup)
+- **Keywords not matching**: Check [Configuration - Keyword Configuration](docs/CONFIGURATION.md#keyword-configuration)
+- **Something not working**: Visit [Troubleshooting](docs/TROUBLESHOOTING.md)
+- **Technical details**: Read [API Reference](docs/API_REFERENCE.md)
 
 
 ## ✨ Core Features

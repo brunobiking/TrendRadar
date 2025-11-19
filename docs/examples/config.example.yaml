@@ -1,0 +1,373 @@
+# TrendRadar Configuration Example
+# This file demonstrates all available configuration options with explanations
+
+# =============================================================================
+# APPLICATION SETTINGS
+# =============================================================================
+app:
+  # URL to check for version updates
+  version_check_url: "https://raw.githubusercontent.com/sansan0/TrendRadar/refs/heads/master/version"
+  
+  # Show version update notifications
+  # Set to false to disable update prompts
+  show_version_update: true
+
+# =============================================================================
+# CRAWLER SETTINGS
+# =============================================================================
+crawler:
+  # Request interval in milliseconds between API calls
+  # Increase if hitting rate limits (try 2000-5000)
+  request_interval: 1000
+  
+  # Enable/disable news crawling
+  # Set to false for testing notification setup only
+  enable_crawler: true
+  
+  # Use proxy for requests (useful in restricted networks)
+  use_proxy: false
+  
+  # Proxy server URL (only used if use_proxy is true)
+  default_proxy: "http://127.0.0.1:10086"
+
+# =============================================================================
+# REPORT MODE CONFIGURATION
+# =============================================================================
+report:
+  # Push mode determines what and when news is sent
+  # Options:
+  #   "daily"       - All matching news of the day (comprehensive)
+  #   "current"     - Current top rankings (real-time)
+  #   "incremental" - Only new items (avoid duplicates)
+  mode: "daily"
+  
+  # Ranking threshold for highlighting
+  # News ranked ≤ this value appear in bold red
+  rank_threshold: 5
+
+# =============================================================================
+# NOTIFICATION SETTINGS
+# =============================================================================
+notification:
+  # Master switch for all notifications
+  # Set to false to only generate HTML reports without notifications
+  enable_notification: true
+  
+  # Message batch sizes (don't modify unless you encounter errors)
+  message_batch_size: 4000      # Telegram, WeWork
+  dingtalk_batch_size: 20000    # DingTalk
+  feishu_batch_size: 29000      # Feishu
+  
+  # Interval between batch sends (seconds)
+  batch_send_interval: 3
+  
+  # Visual separator for Feishu messages
+  feishu_message_separator: "━━━━━━━━━━━━━━━━━━━"
+  
+  # ---------------------------------------------------------------------------
+  # PUSH TIME WINDOW (Optional Feature)
+  # ---------------------------------------------------------------------------
+  # Control WHEN notifications are sent to avoid disturbances
+  push_window:
+    # Enable time window control
+    enabled: false
+    
+    # Time range (Beijing Time, format: HH:MM)
+    time_range:
+      start: "08:00"  # Start of notification window
+      end: "22:00"    # End of notification window
+    
+    # Push only once per day within the window
+    # If false, pushes every execution within window
+    once_per_day: true
+    
+    # Days to keep push history records
+    push_record_retention_days: 7
+  
+  # ---------------------------------------------------------------------------
+  # NOTIFICATION WEBHOOKS
+  # ---------------------------------------------------------------------------
+  # ⚠️ SECURITY WARNING:
+  # - For GitHub Fork deployment: DO NOT fill in webhooks here!
+  #   Use GitHub Secrets instead (Settings → Secrets → Actions)
+  # - For Local/Docker: Safe to fill in here
+  # - Never commit sensitive credentials to public repositories!
+  
+  webhooks:
+    # Feishu Bot Webhook
+    # Get from: https://botbuilder.feishu.cn/
+    feishu_url: ""
+    
+    # DingTalk Bot Webhook
+    # Get from: DingTalk PC client → Group settings → Bot
+    # Security keyword required: "Trending" or "热点"
+    dingtalk_url: ""
+    
+    # WeWork Bot Webhook
+    # Get from: WeWork app → Group settings → Message Push
+    wework_url: ""
+    
+    # Telegram Bot
+    # Get bot token from: @BotFather in Telegram
+    # Get chat ID from: https://api.telegram.org/bot<TOKEN>/getUpdates
+    telegram_bot_token: ""
+    telegram_chat_id: ""
+    
+    # Email Notification
+    # Sender email address
+    email_from: ""
+    
+    # Email password or authorization code (NOT your account password!)
+    # Gmail: Use App Password (requires 2FA)
+    # QQ Mail: Use Authorization Code
+    # 163/126: Use Authorization Code
+    email_password: ""
+    
+    # Recipient email address(es)
+    # Multiple recipients: separate with commas (no spaces)
+    # Example: "user1@example.com,user2@example.com"
+    email_to: ""
+    
+    # SMTP server (optional, leave empty for auto-detection)
+    # Auto-detected for: Gmail, QQ, Outlook, 163, 126, Sina, Sohu
+    email_smtp_server: ""
+    
+    # SMTP port (optional, leave empty for auto-detection)
+    # Common ports: 587 (TLS), 465 (SSL)
+    email_smtp_port: ""
+    
+    # ntfy Push Notification
+    # Server URL (default: public ntfy.sh service)
+    # For self-hosted: "http://your-server.com"
+    ntfy_server_url: "https://ntfy.sh"
+    
+    # Topic name (choose a hard-to-guess name for security)
+    # Example: "trendradar-yourname-8492"
+    # No Chinese characters, only letters/numbers/underscores/hyphens
+    ntfy_topic: ""
+    
+    # Access token (optional, only for private topics)
+    ntfy_token: ""
+
+# =============================================================================
+# TRENDING ALGORITHM WEIGHTS
+# =============================================================================
+# Customize how news is ranked and sorted
+# ⚠️ All three weights MUST sum to 1.0
+weight:
+  # Ranking weight (0.0 - 1.0)
+  # Higher = prioritize top-ranked news
+  rank_weight: 0.6
+  
+  # Frequency weight (0.0 - 1.0)
+  # Higher = prioritize repeatedly appearing news
+  frequency_weight: 0.3
+  
+  # Hotness weight (0.0 - 1.0)
+  # Higher = prioritize consistently high-ranked news
+  hotness_weight: 0.1
+
+# =============================================================================
+# MONITORING PLATFORMS
+# =============================================================================
+# Configure which news sources to monitor
+# Add or remove platforms as needed
+platforms:
+  # ---------------------------------------------------------------------------
+  # Chinese News Sources (11 platforms)
+  # ---------------------------------------------------------------------------
+  
+  - id: "toutiao"
+    name: "Toutiao"
+  
+  - id: "baidu"
+    name: "Baidu Hot Search"
+  
+  - id: "wallstreetcn-hot"
+    name: "Wallstreetcn"
+  
+  - id: "thepaper"
+    name: "The Paper"
+  
+  - id: "bilibili-hot-search"
+    name: "Bilibili Hot"
+  
+  - id: "cls-hot"
+    name: "Yicai"
+  
+  - id: "ifeng"
+    name: "Ifeng"
+  
+  - id: "tieba"
+    name: "Tieba"
+  
+  - id: "weibo"
+    name: "Weibo"
+  
+  - id: "douyin"
+    name: "Douyin"
+  
+  - id: "zhihu"
+    name: "Zhihu"
+  
+  # ---------------------------------------------------------------------------
+  # USA Financial Market Sources (5 platforms)
+  # ---------------------------------------------------------------------------
+  
+  - id: "yahoo-finance-trending"
+    name: "Yahoo Finance Trending"
+    enabled: true
+    language: "en"
+    category: "finance"
+    config:
+      data_type: ["trending", "gainers", "losers"]
+  
+  - id: "seeking-alpha"
+    name: "Seeking Alpha"
+    enabled: true
+    language: "en"
+    category: "finance"
+    config:
+      topics: ["market_news", "earnings"]
+  
+  - id: "benzinga"
+    name: "Benzinga"
+    enabled: true
+    language: "en"
+    category: "finance"
+    config:
+      channels: ["news", "analyst_ratings"]
+  
+  - id: "marketwatch"
+    name: "MarketWatch"
+    enabled: true
+    language: "en"
+    category: "finance"
+    config:
+      sections: ["breaking", "market_pulse"]
+  
+  - id: "finviz-news"
+    name: "Finviz"
+    enabled: true
+    language: "en"
+    category: "finance"
+    config:
+      filters: ["news"]
+
+# =============================================================================
+# EXAMPLE CUSTOMIZATIONS
+# =============================================================================
+
+# ---------------------------------------------------------------------------
+# Example 1: Work Hours Only Notifications
+# ---------------------------------------------------------------------------
+# Uncomment and modify to receive notifications only during work hours
+
+# notification:
+#   push_window:
+#     enabled: true
+#     time_range:
+#       start: "09:00"  # 9 AM
+#       end: "18:00"    # 6 PM
+#     once_per_day: false
+
+# ---------------------------------------------------------------------------
+# Example 2: Evening Summary Only
+# ---------------------------------------------------------------------------
+# Get one summary each evening between 8-10 PM
+
+# notification:
+#   push_window:
+#     enabled: true
+#     time_range:
+#       start: "20:00"  # 8 PM
+#       end: "22:00"    # 10 PM
+#     once_per_day: true
+
+# ---------------------------------------------------------------------------
+# Example 3: Real-Time Trending Focus
+# ---------------------------------------------------------------------------
+# Prioritize current top-ranked news
+
+# weight:
+#   rank_weight: 0.8      # Strong focus on current rankings
+#   frequency_weight: 0.1
+#   hotness_weight: 0.1
+# 
+# report:
+#   mode: "current"       # Current rankings mode
+#   rank_threshold: 3     # Highlight top 3
+
+# ---------------------------------------------------------------------------
+# Example 4: Deep Analysis Focus
+# ---------------------------------------------------------------------------
+# Find stories with staying power
+
+# weight:
+#   rank_weight: 0.4
+#   frequency_weight: 0.5  # Strong focus on persistence
+#   hotness_weight: 0.1
+# 
+# report:
+#   mode: "daily"          # Daily summary mode
+
+# ---------------------------------------------------------------------------
+# Example 5: Breaking News Alerts
+# ---------------------------------------------------------------------------
+# Catch new emerging stories immediately
+
+# weight:
+#   rank_weight: 0.8
+#   frequency_weight: 0.1
+#   hotness_weight: 0.1
+# 
+# report:
+#   mode: "incremental"    # Only new items
+#   rank_threshold: 10
+
+# ---------------------------------------------------------------------------
+# Example 6: Reduced Platform Set (Faster Execution)
+# ---------------------------------------------------------------------------
+# Monitor only key platforms
+
+# platforms:
+#   - id: "zhihu"
+#     name: "Zhihu"
+#   - id: "weibo"
+#     name: "Weibo"
+#   - id: "baidu"
+#     name: "Baidu"
+
+# =============================================================================
+# NOTES
+# =============================================================================
+# 
+# 1. Environment Variable Override:
+#    Settings can be overridden via environment variables (useful for Docker):
+#    - ENABLE_CRAWLER
+#    - ENABLE_NOTIFICATION
+#    - REPORT_MODE
+#    - PUSH_WINDOW_ENABLED
+#    - All webhook URLs and tokens
+# 
+# 2. GitHub Secrets (for GitHub Actions deployment):
+#    Store sensitive data in: Settings → Secrets and variables → Actions
+#    - TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
+#    - WEWORK_WEBHOOK_URL
+#    - FEISHU_WEBHOOK_URL
+#    - DINGTALK_WEBHOOK_URL
+#    - EMAIL_FROM, EMAIL_PASSWORD, EMAIL_TO
+#    - NTFY_TOPIC, NTFY_SERVER_URL, NTFY_TOKEN
+# 
+# 3. Adding Custom Platforms:
+#    Visit https://newsnow.busiyi.world/ to find available platforms
+#    Check source code: https://github.com/ourongxing/newsnow/tree/main/server/sources
+# 
+# 4. Validation:
+#    Validate YAML syntax before use:
+#    python -c "import yaml; yaml.safe_load(open('config/config.yaml'))"
+# 
+# 5. Documentation:
+#    See docs/CONFIGURATION.md for detailed explanations
+# 
+# =============================================================================
