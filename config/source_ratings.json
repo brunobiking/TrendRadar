@@ -1,0 +1,155 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2025-11-19",
+  "description": "News source credibility ratings for TrendRadar",
+  "tiers": {
+    "tier1": {
+      "name": "Tier 1 - Premium Financial Sources",
+      "score_range": [95, 100],
+      "description": "Highly credible, verified by multiple top-tier sources",
+      "sources": [
+        {
+          "name": "Bloomberg",
+          "domain": "bloomberg.com",
+          "score": 98,
+          "category": "finance",
+          "language": "en"
+        },
+        {
+          "name": "Reuters",
+          "domain": "reuters.com",
+          "score": 98,
+          "category": "finance",
+          "language": "en"
+        },
+        {
+          "name": "Wall Street Journal",
+          "domain": "wsj.com",
+          "score": 97,
+          "category": "finance",
+          "language": "en"
+        },
+        {
+          "name": "Financial Times",
+          "domain": "ft.com",
+          "score": 97,
+          "category": "finance",
+          "language": "en"
+        },
+        {
+          "name": "Associated Press",
+          "domain": "apnews.com",
+          "score": 96,
+          "category": "general",
+          "language": "en"
+        }
+      ]
+    },
+    "tier2": {
+      "name": "Tier 2 - Reputable Financial Media",
+      "score_range": [80, 95],
+      "description": "Credible, from reputable sources",
+      "sources": [
+        {
+          "name": "CNBC",
+          "domain": "cnbc.com",
+          "score": 90,
+          "category": "finance",
+          "language": "en"
+        },
+        {
+          "name": "MarketWatch",
+          "domain": "marketwatch.com",
+          "score": 88,
+          "category": "finance",
+          "language": "en"
+        },
+        {
+          "name": "Yahoo Finance",
+          "domain": "finance.yahoo.com",
+          "score": 85,
+          "category": "finance",
+          "language": "en"
+        },
+        {
+          "name": "Seeking Alpha",
+          "domain": "seekingalpha.com",
+          "score": 82,
+          "category": "finance",
+          "language": "en"
+        },
+        {
+          "name": "Benzinga",
+          "domain": "benzinga.com",
+          "score": 82,
+          "category": "finance",
+          "language": "en"
+        },
+        {
+          "name": "Finviz",
+          "domain": "finviz.com",
+          "score": 80,
+          "category": "finance",
+          "language": "en"
+        }
+      ]
+    },
+    "tier3": {
+      "name": "Tier 3 - Smaller Outlets",
+      "score_range": [40, 80],
+      "description": "Questionable, needs verification",
+      "sources": [
+        {
+          "name": "Medium Financial Blogs",
+          "domain": "medium.com",
+          "score": 60,
+          "category": "finance",
+          "language": "en"
+        },
+        {
+          "name": "Motley Fool",
+          "domain": "fool.com",
+          "score": 65,
+          "category": "finance",
+          "language": "en"
+        },
+        {
+          "name": "Investopedia",
+          "domain": "investopedia.com",
+          "score": 70,
+          "category": "finance",
+          "language": "en"
+        }
+      ]
+    },
+    "tier4": {
+      "name": "Tier 4 - Unknown/Suspicious",
+      "score_range": [0, 40],
+      "description": "High manipulation risk",
+      "sources": [
+        {
+          "name": "Social Media Posts",
+          "domain": "twitter.com",
+          "score": 30,
+          "category": "social",
+          "language": "en"
+        },
+        {
+          "name": "Reddit Finance",
+          "domain": "reddit.com",
+          "score": 35,
+          "category": "social",
+          "language": "en"
+        },
+        {
+          "name": "Unknown Sources",
+          "domain": "*",
+          "score": 20,
+          "category": "unknown",
+          "language": "*"
+        }
+      ]
+    }
+  },
+  "default_score": 20
+}
