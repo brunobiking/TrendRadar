@@ -1,13 +1,3 @@
-# Financial Keywords Configuration
-# 
-# This file contains keyword groups for filtering financial news.
-# Each group is separated by an empty line.
-# 
-# Syntax:
-#   - Normal keywords: match any occurrence
-#   - Required keywords (+): must be present along with normal keywords
-#   - Filter keywords (!): exclude news containing these words
-
 # Stock Market Terms
 stocks
 stock market
