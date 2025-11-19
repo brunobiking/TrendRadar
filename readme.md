@@ -33,7 +33,7 @@
 
 <div align="center">
 
-**[中文](README.md)** | **English**
+**English** | **[中文](README.md)**
 
 </div>
 
@@ -66,7 +66,7 @@ This project uses the API from [newsnow](https://github.com/ourongxing/newsnow) 
 
 > Thanks to the following platforms and individuals for recommendations (in chronological order)
 
-- [Appinn (小众软件)](https://mp.weixin.qq.com/s/fvutkJ_NPUelSW9OGK39aA) - Open source software recommendation platform
+- [Appinn (Chinese Software)](https://mp.weixin.qq.com/s/fvutkJ_NPUelSW9OGK39aA) - Open source software recommendation platform
 - [LinuxDo Community](https://linux.do/) - Tech enthusiasts community
 - [Ruan Yifeng's Weekly](https://github.com/ruanyf/weekly) - Influential tech weekly in Chinese tech circle
 
@@ -413,7 +413,7 @@ No longer controlled by platform algorithms, TrendRadar reorganizes all trending
 - **Focus on Persistent Topics** (30%): Repeatedly appearing news is more important
 - **Consider Ranking Quality** (10%): Not just frequent, but consistently top-ranked
 
-> Merge trending searches from各 platforms and re-sort by your interests. These three ratios can be adjusted for your scenarios.
+> Merge trending searches from all platforms and re-sort by your interests. These three ratios can be adjusted for your scenarios.
 
 <details>
 <summary><strong>👉 Click to expand: Trending Weight Adjustment</strong></summary>
@@ -964,7 +964,7 @@ frequency_words.txt file added **required word** feature, using + sign
    2. **Configure Bot**:
       - Set bot name
       - **Security Settings**:
-        - **Custom Keywords**: Set "Trending" or "热点"
+        - **Custom Keywords**: Set "Trending" or "Hotspot"
 
    3. **Complete Setup**:
       - Check service terms agreement → Click "Done"
