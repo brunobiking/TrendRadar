@@ -39,7 +39,7 @@ TrendRadar requires Python 3.10+ with the following packages:
 
 **Usage in TrendRadar:**
 - Fetching news data from newsnow API
-- Sending webhook notifications (Telegram, WeWork, Feishu, DingTalk)
+- Sending ntfy notifications
 - Sending email via SMTP
 
 **Installation:**
@@ -284,56 +284,6 @@ https://USERNAME.github.io/TrendRadar/
 
 All notification platforms are free for basic use:
 
-#### Telegram Bot API
-
-**Service:** Bot platform  
-**URL:** https://core.telegram.org/bots  
-**Cost:** Free  
-**Authentication:** Bot token from @BotFather  
-
-**Limits:**
-- 30 messages/second per bot
-- 20 messages/minute per group
-
----
-
-#### WeWork Bot API
-
-**Service:** Enterprise messaging  
-**URL:** https://work.weixin.qq.com/  
-**Cost:** Free  
-**Authentication:** Webhook URL  
-
-**Limits:**
-- 20 messages/minute per webhook
-
----
-
-#### Feishu Bot API
-
-**Service:** Enterprise collaboration  
-**URL:** https://www.feishu.cn/  
-**Cost:** Free  
-**Authentication:** Webhook URL  
-
-**Limits:**
-- Message size: ~30KB per message
-
----
-
-#### DingTalk Bot API
-
-**Service:** Enterprise communication  
-**URL:** https://www.dingtalk.com/  
-**Cost:** Free  
-**Authentication:** Webhook URL  
-
-**Limits:**
-- 20KB per message
-- Security keywords required
-
----
-
 #### Email (SMTP)
 
 **Service:** Various providers  
@@ -383,10 +333,6 @@ You only need credentials for **notification channels you choose to use**:
 
 | Service | Required Credentials | Where to Get |
 |---------|---------------------|--------------|
-| Telegram | Bot Token + Chat ID | @BotFather in Telegram |
-| WeWork | Webhook URL | Group settings in app |
-| Feishu | Webhook URL | Bot Builder website |
-| DingTalk | Webhook URL | PC client bot settings |
 | Email | Email + App Password | Email provider settings |
 | ntfy | Topic name (+ optional token) | Choose your own / ntfy.sh |
 
@@ -502,21 +448,13 @@ platforms:
 
 | Service | Rate Limit | TrendRadar Handling |
 |---------|------------|---------------------|
-| Telegram | 30 msg/sec, 20 msg/min per group | Batch splitting |
-| WeWork | 20 msg/min | Batch splitting |
-| Feishu | ~30KB per message | Message chunking |
-| DingTalk | 20KB per message | Message chunking |
 | Email | Provider-dependent (500-2000/day) | Single combined email |
 | ntfy | 250 msg/day (public) | No batching needed |
 
-**Batch configuration:**
-```yaml
-notification:
-  message_batch_size: 4000  # Telegram/WeWork
-  dingtalk_batch_size: 20000
-  feishu_batch_size: 29000
-  batch_send_interval: 3  # seconds between batches
-```
+**Notes:**
+- Email notifications are sent as a single comprehensive message
+- ntfy public service has a generous daily limit that is typically sufficient
+- For higher volumes, consider self-hosting ntfy (unlimited)
 
 ---
 
@@ -768,8 +706,10 @@ export ENABLE_NOTIFICATION=true
 export REPORT_MODE=daily
 
 # Notification channels
-export TELEGRAM_BOT_TOKEN=your_token
-export TELEGRAM_CHAT_ID=your_chat_id
+export EMAIL_FROM=your_email@example.com
+export EMAIL_PASSWORD=your_app_password
+export EMAIL_TO=recipient@example.com
+export NTFY_TOPIC=your_topic
 
 # Docker-specific
 export CRON_SCHEDULE="*/30 * * * *"
@@ -813,7 +753,7 @@ docker build -t trendradar:local .
 **Major features:**
 - Multi-platform news aggregation (35+ sources)
 - Three push modes (daily, current, incremental)
-- Six notification channels
+- Two notification channels (Email, ntfy)
 - Push time window control
 - MCP AI analysis (v1.0.2)
 - USA financial sources
