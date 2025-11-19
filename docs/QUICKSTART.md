@@ -18,7 +18,7 @@ Get TrendRadar up and running with the fastest deployment method (GitHub Actions
 ### What TrendRadar Does:
 - 📰 **Tracks 35+ News Platforms**: Monitors Chinese news sources (Zhihu, Weibo, Baidu, etc.) and USA financial markets (Yahoo Finance, MarketWatch, etc.)
 - 🎯 **Personalized Filtering**: Only sends you news matching your custom keywords
-- 📱 **Multi-Channel Notifications**: Delivers updates via Telegram, Email, Feishu, DingTalk, WeWork, or ntfy
+- 📱 **Multi-Channel Notifications**: Delivers updates via Email or ntfy
 - 🤖 **AI Analysis**: Provides conversational trend analysis through MCP integration
 - ☁️ **Zero-Maintenance Deployment**: Runs automatically on GitHub Actions (no server needed)
 
@@ -33,7 +33,7 @@ Get TrendRadar up and running with the fastest deployment method (GitHub Actions
 
 ✅ A GitHub account (free)  
 ✅ 5-10 minutes of your time  
-✅ One notification channel set up (we recommend starting with Telegram or WeWork)
+✅ One notification channel set up (we recommend starting with ntfy for simplicity or Email for reliability)
 
 **No programming knowledge required!**
 
@@ -54,44 +54,9 @@ Get TrendRadar up and running with the fastest deployment method (GitHub Actions
 Pick **one** notification method to start with (you can add more later):
 
 <details>
-<summary><b>Option A: Telegram (Recommended for Beginners)</b></summary>
+<summary><b>Option A: ntfy (Recommended for Beginners)</b></summary>
 
-**Why Telegram?** Simple setup, works worldwide, no phone number needed.
-
-1. Open Telegram and search for `@BotFather`
-2. Send the command: `/newbot`
-3. Choose a name ending with "bot" (e.g., `MyNewsBot`)
-4. Copy the **Bot Token** (looks like: `123456789:AAHfiqksKZ8WmR2zSjiQ7_v4...`)
-5. Send any message to your bot
-6. Visit: `https://api.telegram.org/bot<YOUR_BOT_TOKEN>/getUpdates`
-7. Find your **Chat ID** in the JSON response (the number after `"chat":{"id":`)
-
-**Save these for Step 3:**
-- Bot Token: `123456789:AAHfiqk...`
-- Chat ID: `987654321`
-
-</details>
-
-<details>
-<summary><b>Option B: WeWork (Best for Chinese Users)</b></summary>
-
-**Why WeWork?** Integrates with WeChat, popular in China, simple to configure.
-
-**Mobile Setup:**
-1. Open WeWork app → Enter a group chat
-2. Tap **"..."** at top right → Select **"Message Push"**
-3. Tap **"Add"** → Name it "TrendRadar"
-4. Copy the **Webhook URL** that appears
-
-**Save this for Step 3:**
-- Webhook URL: `https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=...`
-
-</details>
-
-<details>
-<summary><b>Option C: ntfy (Privacy-Focused)</b></summary>
-
-**Why ntfy?** Open-source, self-hostable, no account needed.
+**Why ntfy?** Open-source, self-hostable, no account needed, simple setup.
 
 1. Download ntfy app: [Android](https://play.google.com/store/apps/details?id=io.heckel.ntfy) | [iOS](https://apps.apple.com/us/app/ntfy/id1625396347)
 2. Choose a unique topic name (e.g., `trendradar-yourname-8492`)
@@ -102,7 +67,23 @@ Pick **one** notification method to start with (you can add more later):
 
 </details>
 
-📖 **More Options**: See [CONFIGURATION.md](CONFIGURATION.md) for Email, Feishu, and DingTalk setup.
+<details>
+<summary><b>Option B: Email (Most Reliable)</b></summary>
+
+**Why Email?** Works everywhere, familiar, reliable delivery.
+
+1. Use an existing email account (Gmail, Outlook, etc.)
+2. For Gmail: Generate an App Password (Account → Security → 2-Step Verification → App passwords)
+3. For other providers: Use your regular email password or app-specific password
+
+**Save these for Step 3:**
+- Sender Email: `your-email@gmail.com`
+- Email Password/App Password: `your-app-password`
+- Recipient Email: `recipient@example.com` (can be same as sender)
+
+</details>
+
+📖 **More Options**: See [CONFIGURATION.md](CONFIGURATION.md) for detailed Email setup instructions.
 
 ---
 
@@ -114,21 +95,17 @@ GitHub Secrets keep your credentials secure and private.
 2. Click **"New repository secret"**
 3. Add your notification credentials:
 
-**For Telegram:**
-| Name (exact) | Secret (value) |
-|-------------|----------------|
-| `TELEGRAM_BOT_TOKEN` | Paste your Bot Token |
-| `TELEGRAM_CHAT_ID` | Paste your Chat ID |
-
-**For WeWork:**
-| Name (exact) | Secret (value) |
-|-------------|----------------|
-| `WEWORK_WEBHOOK_URL` | Paste your Webhook URL |
-
 **For ntfy:**
 | Name (exact) | Secret (value) |
 |-------------|----------------|
 | `NTFY_TOPIC` | Your topic name |
+
+**For Email:**
+| Name (exact) | Secret (value) |
+|-------------|----------------|
+| `EMAIL_FROM` | Sender email address |
+| `EMAIL_PASSWORD` | Email password or app password |
+| `EMAIL_TO` | Recipient email address |
 
 ⚠️ **Important**: 
 - Copy the Name **exactly** as shown (case-sensitive)
@@ -223,8 +200,8 @@ Now that TrendRadar is running, customize it for your needs:
 - Get a beautiful web interface at `YOUR-USERNAME.github.io/TrendRadar`
 - 📖 **Learn more**: [DEPLOYMENT.md](DEPLOYMENT.md#github-pages)
 
-### 📱 Add More Notification Channels (10 minutes)
-- Set up Email, Feishu, DingTalk, or multiple channels
+### 📱 Set Up Alternative Notification Channel (10 minutes)
+- Set up both Email and ntfy for redundancy
 - 📖 **Learn more**: [Notification Channels Setup](CONFIGURATION.md#notification-channels-setup)
 
 ### 🐳 Deploy on Your Server (15 minutes)
