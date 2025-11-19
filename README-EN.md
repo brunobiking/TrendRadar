@@ -106,6 +106,7 @@ This project uses the API from [newsnow](https://github.com/ourongxing/newsnow) 
 
 ### **Multi-Platform Trending News Aggregation**
 
+**Chinese News Sources (11 platforms):**
 - Zhihu (知乎)
 - Douyin (抖音)
 - Bilibili Hot Search
@@ -118,7 +119,16 @@ This project uses the API from [newsnow](https://github.com/ourongxing/newsnow) 
 - Toutiao (今日头条)
 - Weibo (微博)
 
-Default monitoring of 11 mainstream platforms, with support for adding custom platforms.
+**USA Financial Market Sources (5 platforms) 🆕:**
+- Yahoo Finance - Trending Tickers
+- Finviz - Market News Aggregator
+- MarketWatch - Breaking Market News
+- Seeking Alpha - Market Analysis
+- Benzinga - Real-time Financial News
+
+Default monitoring of 16 mainstream platforms (11 Chinese + 5 USA Financial), with support for adding custom platforms.
+
+📖 **[View USA Financial Sources Documentation](docs/USA_FINANCIAL_SOURCES.md)** for detailed configuration and usage.
 
 <details id="custom-monitoring-platforms">
 <summary><strong>👉 Click to expand: Custom Monitoring Platforms</strong></summary>
