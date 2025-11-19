@@ -1,0 +1,206 @@
+# Financial Keywords Configuration
+# 
+# This file contains keyword groups for filtering financial news.
+# Each group is separated by an empty line.
+# 
+# Syntax:
+#   - Normal keywords: match any occurrence
+#   - Required keywords (+): must be present along with normal keywords
+#   - Filter keywords (!): exclude news containing these words
+
+# Stock Market Terms
+stocks
+stock market
+shares
+equity
+securities
+
+# Market Movements
+surge
+surges
+surged
+plunge
+plunges
+plunged
+rally
+rallies
+rallied
+crash
+crashes
+crashed
+volatility
+volatile
+gains
+losses
+tumbles
+
+# Financial Events
+earnings
+dividend
+dividends
+IPO
+merger
+mergers
+acquisition
+acquisitions
+buyback
+stock split
+
+# Trading & Investment
+trading
+traders
+investors
+investment
+portfolio
+bull market
+bear market
+market cap
+valuation
+
+# Sectors
+tech stocks
+technology stocks
+energy stocks
+oil stocks
+healthcare stocks
+financial stocks
+consumer stocks
+industrial stocks
+
+# Major Indices
+S&P 500
+S&P500
+SPX
+Dow Jones
+DJIA
+NASDAQ
+Russell 2000
+Russell
+VIX
+
+# Major Tech Companies
+Apple
+AAPL
++Apple
+
+Tesla
+TSLA
++Tesla
+
+NVIDIA
+Nvidia
+NVDA
++NVIDIA
+
+Microsoft
+MSFT
++Microsoft
+
+Google
+Alphabet
+GOOGL
+GOOG
++Google
+
+Meta
+Facebook
+META
++Meta
+
+Amazon
+AMZN
++Amazon
+
+Netflix
+NFLX
++Netflix
+
+# Other Major Companies
+Berkshire
+Berkshire Hathaway
+Warren Buffett
+
+JPMorgan
+JPM
+Bank of America
+BAC
+Wells Fargo
+
+Walmart
+WMT
+Target
+TGT
+
+Boeing
+BA
+Airbus
+
+Pfizer
+PFE
+Johnson & Johnson
+JNJ
+Moderna
+MRNA
+
+ExxonMobil
+XOM
+Chevron
+CVX
+
+# Financial Institutions & Regulators
+Federal Reserve
+Fed
+Jerome Powell
+interest rates
+inflation
+CPI
+unemployment
+
+SEC
+Securities and Exchange Commission
+FINRA
+
+# Analyst Actions
+upgrade
+upgraded
+upgrades
+downgrade
+downgraded
+downgrades
+price target
+analyst rating
+buy rating
+sell rating
+hold rating
+
+# Insider Activity
+insider trading
+insider buying
+insider selling
+CEO
+CFO
+executive
+
+# Economic Indicators
+GDP
+economic growth
+recession
+inflation rate
+consumer spending
+retail sales
+jobs report
+unemployment rate
+
+# Crypto & Alternative Assets (if interested)
+Bitcoin
+BTC
+Ethereum
+ETH
+cryptocurrency
+crypto
+
+# Filter out unwanted content
+!advertisement
+!sponsored
+!promo
+!clickbait

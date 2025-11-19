@@ -440,6 +440,7 @@ class DataFetcher:
     def fetch_data(
         self,
         id_info: Union[str, Tuple[str, str]],
+        platform_config: Optional[Dict] = None,
         max_retries: int = 2,
         min_retry_wait: int = 3,
         max_retry_wait: int = 5,
@@ -451,6 +452,22 @@ class DataFetcher:
             id_value = id_info
             alias = id_value
 
+        # Check if this is a financial source
+        try:
+            from sources.usa_financial import is_financial_source, create_financial_fetcher
+            
+            if platform_config and is_financial_source(id_value):
+                # Use financial fetcher
+                fetcher = create_financial_fetcher(platform_config, self.proxy_url)
+                if fetcher:
+                    print(f"Using financial fetcher for {id_value}")
+                    return fetcher.fetch()
+        except ImportError:
+            print(f"Warning: Financial sources module not available")
+        except Exception as e:
+            print(f"Financial fetcher error for {id_value}: {e}")
+
+        # Default to original API for non-financial sources
         url = f"https://newsnow.busiyi.world/api/s?id={id_value}&latest"
 
         proxies = None
@@ -500,12 +517,19 @@ class DataFetcher:
     def crawl_websites(
         self,
         ids_list: List[Union[str, Tuple[str, str]]],
+        platforms_config: Optional[List[Dict]] = None,
         request_interval: int = CONFIG["REQUEST_INTERVAL"],
     ) -> Tuple[Dict, Dict, List]:
         """Crawl multiple websites data"""
         results = {}
         id_to_name = {}
         failed_ids = []
+
+        # Create a mapping of platform IDs to configs
+        config_map = {}
+        if platforms_config:
+            for platform in platforms_config:
+                config_map[platform["id"]] = platform
 
         for i, id_info in enumerate(ids_list):
             if isinstance(id_info, tuple):
@@ -515,7 +539,16 @@ class DataFetcher:
                 name = id_value
 
             id_to_name[id_value] = name
-            response, _, _ = self.fetch_data(id_info)
+            
+            # Get platform config for this ID
+            platform_config = config_map.get(id_value)
+            
+            # Check if platform is enabled
+            if platform_config and not platform_config.get("enabled", True):
+                print(f"Platform {name} is disabled, skipping...")
+                continue
+            
+            response, _, _ = self.fetch_data(id_info, platform_config)
 
             if response:
                 try:
@@ -4395,7 +4428,7 @@ class NewsAnalyzer:
         ensure_directory_exists("output")
 
         results, id_to_name, failed_ids = self.data_fetcher.crawl_websites(
-            ids, self.request_interval
+            ids, CONFIG["PLATFORMS"], self.request_interval
         )
 
         title_file = save_titles_to_file(results, id_to_name, failed_ids)
