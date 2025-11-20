@@ -66,10 +66,6 @@ notification:
 **Verify GitHub Secrets exist:**
 1. Go to repository → Settings → Secrets → Actions
 2. Confirm at least one notification secret is set:
-   - `TELEGRAM_BOT_TOKEN` + `TELEGRAM_CHAT_ID`
-   - `WEWORK_WEBHOOK_URL`
-   - `FEISHU_WEBHOOK_URL`
-   - `DINGTALK_WEBHOOK_URL`
    - `EMAIL_FROM` + `EMAIL_PASSWORD` + `EMAIL_TO`
    - `NTFY_TOPIC`
 
@@ -127,43 +123,34 @@ push_window:
 
 #### Check 5: Test Webhook Directly
 
-**Telegram:**
-```bash
-curl -X POST "https://api.telegram.org/bot<YOUR_BOT_TOKEN>/sendMessage" \
-  -d "chat_id=<YOUR_CHAT_ID>" \
-  -d "text=Manual test"
-```
-
-**WeWork:**
-```bash
-curl -X POST "<YOUR_WEBHOOK_URL>" \
-  -H "Content-Type: application/json" \
-  -d '{"msgtype":"text","text":{"content":"Manual test"}}'
-```
-
-**Feishu:**
-```bash
-curl -X POST "<YOUR_WEBHOOK_URL>" \
-  -H "Content-Type: application/json" \
-  -d '{"message_type":"text","content":{"text":"Manual test"}}'
-```
-
-**DingTalk:**
-```bash
-curl -X POST "<YOUR_WEBHOOK_URL>" \
-  -H "Content-Type: application/json" \
-  -d '{"msgtype":"text","text":{"content":"Trending Manual test"}}'
-# Note: Must include keyword "Trending" or your configured keyword!
-```
-
 **ntfy:**
 ```bash
 curl -d "Manual test" ntfy.sh/<YOUR_TOPIC>
 ```
 
-**Expected:** Message appears on your device.
+**Email:**
+Test email sending using Python:
+```bash
+python3 -c "
+import smtplib
+from email.mime.text import MIMEText
 
-**If webhook test fails:** Problem is with webhook configuration, not TrendRadar.
+msg = MIMEText('Manual test from TrendRadar')
+msg['Subject'] = 'Test Message'
+msg['From'] = 'your_email@example.com'
+msg['To'] = 'recipient@example.com'
+
+with smtplib.SMTP('smtp.example.com', 587) as server:
+    server.starttls()
+    server.login('your_email@example.com', 'your_password')
+    server.send_message(msg)
+print('Email sent successfully!')
+"
+```
+
+**Expected:** Message appears on your device or in your inbox.
+
+**If test fails:** Problem is with webhook/email configuration, not TrendRadar.
 
 ---
 
@@ -965,92 +952,6 @@ pip install fastmcp>=2.12.0 websockets>=13.0
 
 ## Platform-Specific Issues
 
-### Telegram Issues
-
-<details>
-<summary>❌ "Unauthorized" error</summary>
-
-**Cause:** Bot token invalid or revoked.
-
-**Fix:**
-1. Go back to @BotFather
-2. Send: `/mybots`
-3. Select your bot
-4. API Token → Regenerate
-5. Update configuration with new token
-</details>
-
-<details>
-<summary>❌ "Chat not found"</summary>
-
-**Cause:** Chat ID wrong or haven't messaged bot.
-
-**Fix:**
-1. Send a message to your bot
-2. Get Chat ID again using: 
-   ```
-   https://api.telegram.org/bot<TOKEN>/getUpdates
-   ```
-3. Update configuration
-</details>
-
----
-
-### WeWork Issues
-
-<details>
-<summary>❌ Webhook expired</summary>
-
-**Symptom:** Was working, suddenly stopped.
-
-**Cause:** Webhook can expire if bot removed from group.
-
-**Fix:**
-1. Re-add bot to WeWork group
-2. Get new webhook URL
-3. Update configuration
-</details>
-
----
-
-### Feishu Issues
-
-<details>
-<summary>❌ "System Error"</summary>
-
-**Cause:** Feishu bot application not activated.
-
-**Fix:**
-1. Search for bot in Feishu mobile app
-2. Start a conversation with the bot
-3. This activates the application
-4. Try notification again
-</details>
-
----
-
-### DingTalk Issues
-
-<details>
-<summary>❌ "Keywords not found"</summary>
-
-**Cause:** Message doesn't contain required keyword.
-
-**Fix:** TrendRadar includes "Trending" by default. Verify your bot's keyword setting matches:
-- Keywords: `Trending` or `热点`
-
-**Test:**
-```bash
-curl -X POST "<WEBHOOK>" \
-  -H "Content-Type: application/json" \
-  -d '{"msgtype":"text","text":{"content":"Trending Test"}}'
-```
-
-Must include "Trending" in message!
-</details>
-
----
-
 ### Email Issues
 
 <details>
@@ -1201,7 +1102,7 @@ python -c "import yaml; print(yaml.safe_load(open('config/config.yaml')))"
 
 **Check environment variables (Docker):**
 ```bash
-docker exec trend-radar env | grep -E "ENABLE|REPORT|WEBHOOK|TELEGRAM|EMAIL"
+docker exec trend-radar env | grep -E "ENABLE|REPORT|EMAIL|NTFY"
 ```
 
 **Test webhook manually:**

@@ -224,23 +224,13 @@ report:
 ```yaml
 notification:
   enable_notification: true
-  message_batch_size: 4000
-  dingtalk_batch_size: 20000
-  feishu_batch_size: 29000
-  batch_send_interval: 3
-  feishu_message_separator: "━━━━━━━━━━━━━━━━━━━"
 ```
 
 | Setting | Type | Default | Description |
 |---------|------|---------|-------------|
 | `enable_notification` | boolean | `true` | Master switch for all notifications |
-| `message_batch_size` | bytes | `4000` | Split size for Telegram/WeWork |
-| `dingtalk_batch_size` | bytes | `20000` | Split size for DingTalk |
-| `feishu_batch_size` | bytes | `29000` | Split size for Feishu |
-| `batch_send_interval` | seconds | `3` | Delay between batches |
-| `feishu_message_separator` | string | `━━━━━` | Visual separator in Feishu |
 
-**⚠️ Warning:** Don't modify batch sizes unless you encounter errors. These are optimized for each platform's limits.
+**Note:** Email and ntfy notifications do not require batch splitting or special configuration.
 
 **Use case for disabling:**
 ```yaml

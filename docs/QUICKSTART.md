@@ -136,7 +136,7 @@ GitHub Secrets keep your credentials secure and private.
 
 ✅ **What you should see**: 
 - A yellow dot turns into a green checkmark (workflow succeeded)
-- A notification on your chosen platform (Telegram/WeWork/ntfy)
+- A notification on your chosen platform (Email or ntfy)
 
 ### 🎉 Success! What's in Your First Notification?
 
