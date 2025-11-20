@@ -1562,7 +1562,7 @@ Cherry Studio provides GUI config interface, 5-minute quick deployment, complex 
 
 ### 2. Learning to Talk with AI
 
-**Detailed Conversation Tutorial**: [README-MCP-FAQ.md](README-MCP-FAQ.md)
+**Detailed Conversation Tutorial**: [README-MCP-FAQ-EN.md](README-MCP-FAQ-EN.md)
 
 **Question Effect**:
 
