@@ -1,0 +1,351 @@
+# AI Providers Configuration
+# 
+# This file documents how to configure different AI providers for use with TrendRadar's MCP features.
+# Copy this file to 'ai_providers.yaml' and customize it with your API keys and preferences.
+#
+# Security Best Practices:
+# - Use environment variables for API keys (format: ${ENV_VAR_NAME})
+# - Never commit actual API keys to version control
+# - The actual 'ai_providers.yaml' file is in .gitignore for your protection
+#
+# Configuration Priority:
+# - This configuration is OPTIONAL - TrendRadar works without it
+# - MCP clients (Cherry Studio, Claude Desktop, etc.) ultimately handle AI calls
+# - This file helps organize and document your AI provider setup
+
+ai_providers:
+  # ============================================================================
+  # LOCAL OLLAMA - Free, Self-Hosted, Privacy-Focused
+  # ============================================================================
+  # Ollama runs AI models locally on your machine - completely free and private
+  # Installation: https://ollama.com/download
+  # 
+  # Quick start:
+  # 1. Download and install Ollama from https://ollama.com
+  # 2. Run: ollama pull llama3 (or any other model)
+  # 3. Ollama server starts automatically at http://localhost:11434
+  # 4. Configure your MCP client to use this endpoint
+  #
+  # Popular models:
+  # - llama3, llama3.1, llama3.2 (Meta's LLaMA models)
+  # - qwen2.5 (Alibaba's Qwen models)
+  # - mistral, mixtral (Mistral AI models)
+  # - codellama (specialized for coding)
+  # - deepseek-coder (specialized for coding)
+  #
+  ollama:
+    enabled: true
+    type: "ollama"
+    base_url: "http://localhost:11434"
+    default_model: "llama3"
+    description: "Local Ollama server - Free, privacy-focused, runs on your machine"
+    parameters:
+      temperature: 0.7
+      num_ctx: 4096  # Context window size
+    models:
+      - "llama3"
+      - "llama3.1"
+      - "qwen2.5"
+      - "mistral"
+    notes: |
+      Ollama is the recommended option for:
+      - Privacy-sensitive applications
+      - Offline usage
+      - No API costs
+      - Full control over models
+      
+      Performance depends on your hardware:
+      - CPU: Slower but works on any computer
+      - GPU (NVIDIA/AMD): Significantly faster
+      - Apple Silicon: Excellent performance with Metal
+
+  # ============================================================================
+  # OPENAI - GPT-4, GPT-3.5-Turbo, and more
+  # ============================================================================
+  # OpenAI provides industry-leading language models including GPT-4
+  # Website: https://platform.openai.com/
+  # API Keys: https://platform.openai.com/api-keys
+  #
+  # Pricing (as of 2024):
+  # - GPT-3.5-Turbo: $0.50 / 1M input tokens, $1.50 / 1M output tokens
+  # - GPT-4: $30 / 1M input tokens, $60 / 1M output tokens
+  # - GPT-4-Turbo: $10 / 1M input tokens, $30 / 1M output tokens
+  #
+  openai:
+    enabled: false
+    type: "openai"
+    base_url: "https://api.openai.com/v1"
+    api_key: "${OPENAI_API_KEY}"  # Use environment variable for security
+    default_model: "gpt-4-turbo-preview"
+    description: "OpenAI's GPT models - High quality, paid service"
+    parameters:
+      temperature: 0.7
+      max_tokens: 2000
+      top_p: 1.0
+      frequency_penalty: 0.0
+      presence_penalty: 0.0
+    models:
+      - "gpt-4-turbo-preview"
+      - "gpt-4"
+      - "gpt-3.5-turbo"
+    notes: |
+      OpenAI is recommended for:
+      - Highest quality responses
+      - Complex reasoning tasks
+      - Production applications
+      - When cost is not the primary concern
+
+  # ============================================================================
+  # ANTHROPIC CLAUDE - Claude 3 Family
+  # ============================================================================
+  # Anthropic provides Claude models known for helpfulness and safety
+  # Website: https://www.anthropic.com/
+  # API Keys: https://console.anthropic.com/settings/keys
+  #
+  # Pricing (as of 2024):
+  # - Claude 3 Haiku: $0.25 / 1M input tokens, $1.25 / 1M output tokens
+  # - Claude 3 Sonnet: $3 / 1M input tokens, $15 / 1M output tokens
+  # - Claude 3 Opus: $15 / 1M input tokens, $75 / 1M output tokens
+  #
+  claude:
+    enabled: false
+    type: "anthropic"
+    base_url: "https://api.anthropic.com/v1"
+    api_key: "${ANTHROPIC_API_KEY}"  # Use environment variable for security
+    default_model: "claude-3-sonnet-20240229"
+    description: "Anthropic's Claude models - Strong reasoning, helpful and harmless"
+    parameters:
+      temperature: 0.7
+      max_tokens: 4096
+      top_p: 1.0
+    models:
+      - "claude-3-opus-20240229"
+      - "claude-3-sonnet-20240229"
+      - "claude-3-haiku-20240307"
+    notes: |
+      Claude is recommended for:
+      - Long-form content analysis
+      - Ethical and safe responses
+      - Strong reasoning capabilities
+      - Good alternative to GPT-4
+
+  # ============================================================================
+  # GOOGLE GEMINI - Gemini Pro and Ultra
+  # ============================================================================
+  # Google's Gemini models with multimodal capabilities
+  # Website: https://ai.google.dev/
+  # API Keys: https://makersuite.google.com/app/apikey
+  #
+  # Pricing (as of 2024):
+  # - Gemini Pro: Free tier available (60 requests/minute)
+  # - Gemini Pro: $0.50 / 1M characters (paid tier)
+  # - Gemini 1.5 Pro: $3.50 / 1M input tokens, $10.50 / 1M output tokens
+  #
+  gemini:
+    enabled: false
+    type: "google"
+    base_url: "https://generativelanguage.googleapis.com/v1beta"
+    api_key: "${GOOGLE_API_KEY}"  # Use environment variable for security
+    default_model: "gemini-1.5-pro"
+    description: "Google's Gemini models - Multimodal, generous free tier"
+    parameters:
+      temperature: 0.7
+      max_output_tokens: 2048
+      top_p: 0.95
+      top_k: 40
+    models:
+      - "gemini-1.5-pro"
+      - "gemini-1.5-flash"
+      - "gemini-pro"
+    notes: |
+      Gemini is recommended for:
+      - Cost-effective usage (generous free tier)
+      - Multimodal applications
+      - Long context windows (up to 1M tokens)
+      - Google ecosystem integration
+
+  # ============================================================================
+  # AZURE OPENAI - Enterprise GPT models via Azure
+  # ============================================================================
+  # OpenAI models hosted on Microsoft Azure with enterprise features
+  # Website: https://azure.microsoft.com/en-us/products/cognitive-services/openai-service/
+  # Setup: https://portal.azure.com/
+  #
+  # Pricing: Same as OpenAI, with Azure billing
+  # Benefits: Enterprise SLA, security, compliance, regional deployment
+  #
+  azure:
+    enabled: false
+    type: "azure"
+    base_url: "${AZURE_ENDPOINT}"  # e.g., https://YOUR_RESOURCE.openai.azure.com/
+    api_key: "${AZURE_API_KEY}"  # Use environment variable for security
+    api_version: "2024-02-15-preview"
+    deployment_name: "gpt-4"  # Your Azure deployment name
+    default_model: "gpt-4"
+    description: "Azure OpenAI Service - Enterprise-grade GPT models"
+    parameters:
+      temperature: 0.7
+      max_tokens: 2000
+    notes: |
+      Azure OpenAI is recommended for:
+      - Enterprise deployments
+      - Compliance requirements (HIPAA, SOC 2, etc.)
+      - Regional data residency
+      - Existing Azure infrastructure
+      
+      Note: Requires Azure subscription and OpenAI service approval
+
+  # ============================================================================
+  # SILICONFLOW - Chinese AI Platform with Multiple Models
+  # ============================================================================
+  # SiliconFlow provides access to various AI models with Chinese support
+  # Website: https://cloud.siliconflow.cn
+  # API Keys: https://cloud.siliconflow.cn/me/account/ak
+  #
+  # Pricing: 
+  # - New users get 20 million free tokens with referral
+  # - Various models available (Qwen, DeepSeek, etc.)
+  #
+  siliconflow:
+    enabled: false
+    type: "openai-compatible"
+    base_url: "https://api.siliconflow.cn/v1"
+    api_key: "${SILICONFLOW_API_KEY}"  # Use environment variable for security
+    default_model: "Qwen/Qwen2.5-7B-Instruct"
+    description: "SiliconFlow - Multiple AI models with Chinese language support"
+    parameters:
+      temperature: 0.7
+      max_tokens: 2000
+    models:
+      - "Qwen/Qwen2.5-7B-Instruct"
+      - "Qwen/Qwen2.5-14B-Instruct"
+      - "deepseek-ai/DeepSeek-V2.5"
+      - "THUDM/glm-4-9b-chat"
+    notes: |
+      SiliconFlow is recommended for:
+      - Chinese language applications
+      - Cost-effective AI access in China
+      - Multiple model options
+      - Good free tier for testing
+      
+      Referral link for free tokens: https://cloud.siliconflow.cn/i/fqnyVaIU
+
+  # ============================================================================
+  # 302.AI - AI Proxy Service
+  # ============================================================================
+  # 302.AI provides access to various AI models through a unified API
+  # Website: https://302.ai
+  # Registration: New users get $1 free credit
+  #
+  # Features:
+  # - Access to GPT-4, Claude, and other models
+  # - Simple pricing and billing
+  # - No complex setup required
+  #
+  ai302:
+    enabled: false
+    type: "openai-compatible"
+    base_url: "https://api.302.ai/v1"
+    api_key: "${AI302_API_KEY}"  # Use environment variable for security
+    default_model: "gpt-3.5-turbo"
+    description: "302.AI - AI model proxy with unified API"
+    parameters:
+      temperature: 0.7
+      max_tokens: 2000
+    notes: |
+      302.AI is recommended for:
+      - Easy access to multiple models
+      - Simple billing without multiple subscriptions
+      - Testing different AI providers
+      - Users in regions with API access restrictions
+
+  # ============================================================================
+  # CUSTOM OPENAI-COMPATIBLE ENDPOINT
+  # ============================================================================
+  # Template for any OpenAI-compatible API endpoint
+  # Many services provide OpenAI-compatible APIs, including:
+  # - Together AI (https://together.ai/)
+  # - Anyscale (https://www.anyscale.com/)
+  # - OpenRouter (https://openrouter.ai/)
+  # - Local LM Studio (https://lmstudio.ai/)
+  # - Text Generation WebUI (https://github.com/oobabooga/text-generation-webui)
+  #
+  custom_openai:
+    enabled: false
+    type: "openai-compatible"
+    base_url: "http://localhost:5000/v1"  # Change to your endpoint
+    api_key: "${CUSTOM_API_KEY}"  # Use environment variable if needed
+    default_model: "your-model-name"
+    description: "Custom OpenAI-compatible endpoint"
+    parameters:
+      temperature: 0.7
+      max_tokens: 2000
+    notes: |
+      Custom endpoint is useful for:
+      - Self-hosted language models (LM Studio, text-generation-webui)
+      - Alternative AI platforms (Together AI, Anyscale)
+      - Corporate/internal AI services
+      - Testing and development
+      
+      Make sure your endpoint follows OpenAI's API format
+
+# ============================================================================
+# ENVIRONMENT VARIABLES REFERENCE
+# ============================================================================
+# Set these environment variables for secure API key management:
+#
+# export OPENAI_API_KEY="sk-..."
+# export ANTHROPIC_API_KEY="sk-ant-..."
+# export GOOGLE_API_KEY="AI..."
+# export AZURE_ENDPOINT="https://YOUR_RESOURCE.openai.azure.com/"
+# export AZURE_API_KEY="..."
+# export SILICONFLOW_API_KEY="sk-..."
+# export AI302_API_KEY="sk-..."
+# export CUSTOM_API_KEY="..."
+#
+# On Windows (PowerShell):
+# $env:OPENAI_API_KEY="sk-..."
+#
+# On Windows (CMD):
+# set OPENAI_API_KEY=sk-...
+
+# ============================================================================
+# USAGE WITH MCP CLIENTS
+# ============================================================================
+#
+# This configuration file is primarily for documentation and reference.
+# To actually use these AI providers with TrendRadar's MCP features:
+#
+# 1. Configure your MCP client (Cherry Studio, Claude Desktop, Cursor, etc.)
+#    to connect to TrendRadar's MCP server
+#
+# 2. Configure the AI provider in your MCP client's settings:
+#    - For Cherry Studio: Settings → Model Service → Add provider
+#    - For Claude Desktop: config file at ~/Library/Application Support/Claude/
+#    - For Cursor: Settings → AI models
+#
+# 3. The MCP client will use the configured AI provider to make requests
+#
+# See README-MCP-FAQ.md for detailed setup instructions.
+
+# ============================================================================
+# CHOOSING THE RIGHT PROVIDER
+# ============================================================================
+#
+# For privacy and no cost:
+#   → Use Ollama (local, free, private)
+#
+# For best quality and budget allows:
+#   → Use OpenAI GPT-4 or Claude 3 Opus
+#
+# For cost-effective cloud:
+#   → Use Gemini (generous free tier) or GPT-3.5-Turbo
+#
+# For Chinese language:
+#   → Use SiliconFlow, 302.AI, or Qwen models on Ollama
+#
+# For enterprise:
+#   → Use Azure OpenAI with your compliance requirements
+#
+# For testing/development:
+#   → Use Ollama (local) or Gemini (free tier)

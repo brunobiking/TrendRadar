@@ -42,3 +42,4 @@ output/
 *.log
 .env
 config/config.local.yaml
+config/ai_providers.yaml

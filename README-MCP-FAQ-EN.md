@@ -20,7 +20,73 @@ The following optimization strategies are used by default, mainly to save AI tok
 
 ## 💰 AI Models
 
-Below I use **[SiliconFlow](https://cloud.siliconflow.cn)** platform as an example, which offers many large models to choose from. During the development and testing of this project, I used this platform for extensive functional testing and validation.
+TrendRadar supports multiple AI providers. You can choose based on your needs:
+
+### 🆓 Free Option - Ollama (Recommended for Beginners)
+
+**Ollama** is a completely free, open-source local AI tool that runs various large language models on your computer, with no API fees and complete privacy protection.
+
+#### Why Choose Ollama?
+
+- ✅ **Completely Free** - No API keys, no usage fees
+- ✅ **Privacy Protected** - Data never leaves your computer
+- ✅ **Works Offline** - No internet connection required
+- ✅ **Multiple Models** - Supports LLaMA, Qwen, Mistral, and other mainstream models
+- ✅ **Easy to Use** - One-click installation, auto-start
+
+#### Quick Start with Ollama
+
+1. **Download and Install Ollama**
+   - Visit https://ollama.com/download
+   - Download the version for your system (Windows/macOS/Linux)
+   - Run the installer
+
+2. **Download an AI Model**
+   ```bash
+   # Download LLaMA 3 (recommended, 8B parameters)
+   ollama pull llama3
+   
+   # Or download Qwen 2.5 (Chinese-optimized, 7B parameters)
+   ollama pull qwen2.5
+   
+   # Or download Mistral (7B parameters)
+   ollama pull mistral
+   ```
+
+3. **Verify Ollama is Running**
+   ```bash
+   # Ollama starts automatically after installation, test with:
+   ollama list  # View downloaded models
+   ```
+
+4. **Configure in Your MCP Client**
+   - Open your MCP client (e.g., Cherry Studio)
+   - Add a new model service
+   - Configure as:
+     - Type: OpenAI Compatible
+     - Base URL: `http://localhost:11434/v1`
+     - Model Name: `llama3` (or other model you downloaded)
+     - API Key: Leave empty or use any value (not needed for local)
+
+#### Model Recommendations
+
+| Model | Parameters | Memory Required | Use Case |
+|-------|------------|-----------------|----------|
+| **llama3** | 8B | ~8GB | General tasks, recommended |
+| **qwen2.5** | 7B | ~7GB | Chinese-optimized |
+| **mistral** | 7B | ~7GB | High-quality output |
+| **codellama** | 7B | ~7GB | Code analysis |
+| **deepseek-coder** | 6.7B | ~7GB | Code generation |
+
+> **💡 Tip**: If your computer has an NVIDIA or AMD graphics card, Ollama will automatically use GPU acceleration for faster performance!
+
+More models at: https://ollama.com/library
+
+---
+
+### 💳 Paid Options - Cloud AI Services
+
+If you need more powerful AI capabilities or don't want to run locally, you can choose cloud services. Below I use **[SiliconFlow](https://cloud.siliconflow.cn)** platform as an example, which offers many large models to choose from. During the development and testing of this project, I used this platform for extensive functional testing and validation.
 
 ### 📊 Registration Method Comparison
 
