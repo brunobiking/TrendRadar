@@ -1467,8 +1467,6 @@ Cherry Studio provides GUI config interface, 5-minute quick deployment, complex 
 
 ### 2. Learning to Talk with AI
 
-**Detailed Conversation Tutorial**: [README-MCP-FAQ.md](README-MCP-FAQ.md)
-
 **Question Effect**:
 
 > Actually not recommended to ask multiple questions at once. If your chosen AI model cannot even sequentially call as shown below, suggest switching models.
