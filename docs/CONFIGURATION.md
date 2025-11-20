@@ -1395,6 +1395,379 @@ platforms:
 
 ---
 
+## AI Provider Configuration
+
+**Optional Feature:** Configure AI providers for use with TrendRadar's MCP (Model Context Protocol) features.
+
+### Overview
+
+TrendRadar supports multiple AI providers for its AI analysis features. While MCP clients (Cherry Studio, Claude Desktop, Cursor, etc.) handle the actual AI calls, you can use `config/ai_providers.yaml` to document and organize your AI provider configurations.
+
+**Important Notes:**
+- This configuration is **completely optional** - TrendRadar's core functionality works without it
+- The file is for documentation and reference purposes
+- Actual AI provider configuration happens in your MCP client
+- The configuration helps you organize multiple providers and switch between them
+
+---
+
+### Supported AI Providers
+
+TrendRadar documentation covers these AI providers:
+
+| Provider | Type | Cost | Best For |
+|----------|------|------|----------|
+| **Ollama** | Local | Free | Privacy, no API costs, offline use |
+| **OpenAI** | Cloud | Paid | Highest quality (GPT-4) |
+| **Anthropic Claude** | Cloud | Paid | Strong reasoning, helpful responses |
+| **Google Gemini** | Cloud | Free tier + Paid | Cost-effective, generous free tier |
+| **Azure OpenAI** | Cloud | Paid | Enterprise deployments |
+| **SiliconFlow** | Cloud | Free tier + Paid | Chinese language, multiple models |
+| **302.AI** | Cloud | Free tier + Paid | AI proxy service |
+| **Custom OpenAI-compatible** | Various | Varies | Self-hosted, other platforms |
+
+---
+
+### Quick Start
+
+#### Step 1: Copy the Example Configuration
+
+```bash
+cp config/ai_providers.yaml.example config/ai_providers.yaml
+```
+
+#### Step 2: Edit Your Configuration
+
+Open `config/ai_providers.yaml` and configure your providers:
+
+```yaml
+ai_providers:
+  # Example: Enable Ollama (local, free)
+  ollama:
+    enabled: true
+    type: "ollama"
+    base_url: "http://localhost:11434"
+    default_model: "llama3"
+    
+  # Example: Enable OpenAI
+  openai:
+    enabled: true
+    type: "openai"
+    base_url: "https://api.openai.com/v1"
+    api_key: "${OPENAI_API_KEY}"  # Use environment variable
+    default_model: "gpt-4-turbo-preview"
+```
+
+#### Step 3: Set Environment Variables (for cloud providers)
+
+For security, use environment variables for API keys:
+
+```bash
+# Linux/macOS
+export OPENAI_API_KEY="sk-..."
+export ANTHROPIC_API_KEY="sk-ant-..."
+export GOOGLE_API_KEY="AI..."
+
+# Windows PowerShell
+$env:OPENAI_API_KEY="sk-..."
+```
+
+#### Step 4: Validate Your Configuration
+
+Use the helper script to validate and test your configuration:
+
+```bash
+# Validate configuration
+python scripts/check_ai_config.py
+
+# Test connectivity to enabled providers
+python scripts/check_ai_config.py --test-connectivity
+
+# Verbose output
+python scripts/check_ai_config.py --test-connectivity --verbose
+```
+
+---
+
+### Setting Up Ollama (Recommended Free Option)
+
+**Ollama** runs AI models locally on your computer - completely free and private.
+
+#### Installation
+
+1. **Download Ollama**
+   - Visit: https://ollama.com/download
+   - Download for Windows, macOS, or Linux
+   - Run the installer
+
+2. **Download a Model**
+   ```bash
+   # Download LLaMA 3 (recommended)
+   ollama pull llama3
+   
+   # Or other models
+   ollama pull qwen2.5      # Chinese-optimized
+   ollama pull mistral      # High quality
+   ollama pull codellama    # Code-specialized
+   ```
+
+3. **Verify Installation**
+   ```bash
+   ollama list              # List installed models
+   ollama serve             # Start server (usually auto-starts)
+   ```
+
+4. **Configure in ai_providers.yaml**
+   ```yaml
+   ai_providers:
+     ollama:
+       enabled: true
+       type: "ollama"
+       base_url: "http://localhost:11434"
+       default_model: "llama3"
+   ```
+
+**Benefits:**
+- ✅ No API keys needed
+- ✅ No usage costs
+- ✅ Complete privacy
+- ✅ Works offline
+- ✅ Fast on GPUs
+
+**Hardware Requirements:**
+- Minimum: 8GB RAM for 7B models
+- Recommended: 16GB RAM + GPU for better performance
+- Apple Silicon: Excellent performance with Metal
+
+---
+
+### Setting Up Cloud Providers
+
+#### OpenAI (GPT-4, GPT-3.5-Turbo)
+
+1. **Get API Key**
+   - Visit: https://platform.openai.com/api-keys
+   - Create new key
+
+2. **Configure**
+   ```yaml
+   openai:
+     enabled: true
+     type: "openai"
+     base_url: "https://api.openai.com/v1"
+     api_key: "${OPENAI_API_KEY}"
+     default_model: "gpt-4-turbo-preview"
+   ```
+
+3. **Set Environment Variable**
+   ```bash
+   export OPENAI_API_KEY="sk-..."
+   ```
+
+#### Anthropic Claude
+
+1. **Get API Key**
+   - Visit: https://console.anthropic.com/settings/keys
+
+2. **Configure**
+   ```yaml
+   claude:
+     enabled: true
+     type: "anthropic"
+     api_key: "${ANTHROPIC_API_KEY}"
+     default_model: "claude-3-sonnet-20240229"
+   ```
+
+#### Google Gemini
+
+1. **Get API Key**
+   - Visit: https://makersuite.google.com/app/apikey
+   - Enable Gemini API
+
+2. **Configure**
+   ```yaml
+   gemini:
+     enabled: true
+     type: "google"
+     api_key: "${GOOGLE_API_KEY}"
+     default_model: "gemini-1.5-pro"
+   ```
+
+---
+
+### Configuration Reference
+
+See `config/ai_providers.yaml.example` for:
+- Complete configuration examples for all providers
+- Detailed comments and documentation
+- Security best practices
+- Provider-specific parameters
+- Model recommendations
+- Pricing information
+
+---
+
+### Using with MCP Clients
+
+After configuring providers in `ai_providers.yaml`:
+
+1. **Start TrendRadar MCP Server**
+   ```bash
+   uv run python -m mcp_server.server
+   ```
+
+2. **Configure Your MCP Client**
+   
+   Example for Cherry Studio:
+   - Settings → Model Service
+   - Add provider (Ollama/OpenAI/etc.)
+   - Enter API key and settings
+   
+   Example for Claude Desktop:
+   - Edit `~/Library/Application Support/Claude/claude_desktop_config.json`
+   - Add TrendRadar MCP server configuration
+
+3. **Use Natural Language Queries**
+   ```
+   "Search for AI news from yesterday"
+   "Analyze Tesla's popularity trend this week"
+   "What are the top tech stories today?"
+   ```
+
+See [README-MCP-FAQ.md](../README-MCP-FAQ.md) for detailed MCP setup.
+
+---
+
+### Security Best Practices
+
+#### Never Commit API Keys
+
+The `config/ai_providers.yaml` file is in `.gitignore` to prevent accidental commits.
+
+**Always use environment variables:**
+```yaml
+# Good - uses environment variable
+api_key: "${OPENAI_API_KEY}"
+
+# Bad - hardcoded key (never do this!)
+api_key: "sk-1234567890abcdef"
+```
+
+#### Protect Your Keys
+
+- Store keys in environment variables or password managers
+- Never share keys in screenshots or logs
+- Rotate keys regularly
+- Use separate keys for development and production
+- Monitor usage for unauthorized access
+
+#### File Permissions
+
+```bash
+# Restrict access to config file
+chmod 600 config/ai_providers.yaml
+```
+
+---
+
+### Troubleshooting
+
+#### Configuration Validation Errors
+
+```bash
+# Run validation script
+python scripts/check_ai_config.py --verbose
+```
+
+Common issues:
+- Environment variable not set → Set the variable
+- Invalid YAML syntax → Check indentation
+- Missing required fields → Add them to config
+
+#### Connectivity Issues
+
+```bash
+# Test connectivity
+python scripts/check_ai_config.py --test-connectivity
+```
+
+Common issues:
+- Ollama not running → Start with `ollama serve`
+- Invalid API key → Check key and permissions
+- Network issues → Check firewall/proxy settings
+- Rate limiting → Wait and reduce request frequency
+
+#### Provider-Specific Issues
+
+**Ollama:**
+- Check if running: `ollama list`
+- Try different port if 11434 is busy
+- Verify model is downloaded: `ollama pull llama3`
+
+**OpenAI:**
+- Verify key at https://platform.openai.com/api-keys
+- Check billing and usage limits
+- Ensure key has proper permissions
+
+**Gemini:**
+- Enable API at https://makersuite.google.com
+- Check API quota and limits
+- Verify key format
+
+---
+
+### Example Workflows
+
+#### For Privacy-Conscious Users
+
+```yaml
+ai_providers:
+  ollama:
+    enabled: true
+    base_url: "http://localhost:11434"
+    default_model: "llama3"
+```
+
+All processing happens locally, no data leaves your machine.
+
+#### For Best Quality
+
+```yaml
+ai_providers:
+  openai:
+    enabled: true
+    api_key: "${OPENAI_API_KEY}"
+    default_model: "gpt-4-turbo-preview"
+```
+
+Use GPT-4 for highest quality analysis.
+
+#### For Cost-Effective Cloud
+
+```yaml
+ai_providers:
+  gemini:
+    enabled: true
+    api_key: "${GOOGLE_API_KEY}"
+    default_model: "gemini-1.5-pro"
+```
+
+Gemini offers generous free tier and good quality.
+
+#### For Chinese Language
+
+```yaml
+ai_providers:
+  siliconflow:
+    enabled: true
+    api_key: "${SILICONFLOW_API_KEY}"
+    default_model: "Qwen/Qwen2.5-7B-Instruct"
+```
+
+Or use Ollama with Qwen models locally.
+
+---
+
 ## Advanced Configuration
 
 ### Environment Variable Override

@@ -20,7 +20,73 @@
 
 ## 💰 AI 模型
 
-下面我以 **[硅基流动](https://cloud.siliconflow.cn)** 平台作为例子，里面有很多大模型可选择。在开发和测试本项目的过程中，我使用本平台进行了许多的功能测试和验证。
+TrendRadar 支持多种 AI 提供商，你可以根据自己的需求选择：
+
+### 🆓 免费选项 - Ollama（推荐入门）
+
+**Ollama** 是一个完全免费、开源的本地 AI 运行工具，可以在你的电脑上运行各种大语言模型，无需支付 API 费用，完全隐私保护。
+
+#### 为什么选择 Ollama？
+
+- ✅ **完全免费** - 无需 API 密钥，无使用费用
+- ✅ **隐私保护** - 数据不离开你的电脑
+- ✅ **离线工作** - 不需要网络连接
+- ✅ **多种模型** - 支持 LLaMA、Qwen、Mistral 等主流模型
+- ✅ **简单易用** - 一键安装，自动启动
+
+#### 快速开始使用 Ollama
+
+1. **下载并安装 Ollama**
+   - 访问 https://ollama.com/download
+   - 下载适合你系统的版本（Windows/macOS/Linux）
+   - 运行安装程序
+
+2. **下载 AI 模型**
+   ```bash
+   # 下载 LLaMA 3（推荐，8B 参数）
+   ollama pull llama3
+   
+   # 或下载 Qwen 2.5（中文优化，7B 参数）
+   ollama pull qwen2.5
+   
+   # 或下载 Mistral（7B 参数）
+   ollama pull mistral
+   ```
+
+3. **验证 Ollama 运行**
+   ```bash
+   # Ollama 安装后会自动运行，可以测试：
+   ollama list  # 查看已下载的模型
+   ```
+
+4. **在 MCP 客户端中配置**
+   - 打开你的 MCP 客户端（如 Cherry Studio）
+   - 添加新的模型服务
+   - 配置为：
+     - 类型：OpenAI 兼容
+     - Base URL: `http://localhost:11434/v1`
+     - 模型名称：`llama3`（或你下载的其他模型）
+     - API Key：留空或填写任意值（本地不需要）
+
+#### 模型推荐
+
+| 模型 | 参数量 | 内存需求 | 适用场景 |
+|------|--------|----------|----------|
+| **llama3** | 8B | ~8GB | 通用任务，推荐 |
+| **qwen2.5** | 7B | ~7GB | 中文优化 |
+| **mistral** | 7B | ~7GB | 高质量输出 |
+| **codellama** | 7B | ~7GB | 代码分析 |
+| **deepseek-coder** | 6.7B | ~7GB | 代码生成 |
+
+> **💡 提示**：如果你的电脑有 NVIDIA 或 AMD 显卡，Ollama 会自动使用 GPU 加速，速度更快！
+
+更多模型请访问：https://ollama.com/library
+
+---
+
+### 💳 付费选项 - 云端 AI 服务
+
+如果你需要更强大的 AI 能力或不想在本地运行，可以选择云端服务。下面以 **[硅基流动](https://cloud.siliconflow.cn)** 平台作为例子，里面有很多大模型可选择。在开发和测试本项目的过程中，我使用本平台进行了许多的功能测试和验证。
 
 ### 📊 注册方式对比
 

@@ -338,17 +338,77 @@ You only need credentials for **notification channels you choose to use**:
 
 **All notification services above are free!**
 
-### Optional Services
+### Optional AI Provider Configuration
 
 **MCP AI Analysis:**
 - **No keys required** for MCP server itself
-- **AI model API key required** to use AI features:
-  - OpenAI API (ChatGPT, Claude via OpenAI-compatible)
-  - Anthropic API (Claude)
-  - Local AI models (free, open-source)
-  - 302.AI ($1 free credit for new users)
+- **AI provider configuration is optional** - for documentation and organization
 
-**See:** [README-Cherry-Studio.md](../README-Cherry-Studio.md) for AI setup.
+**Supported AI Providers:**
+
+| Provider | Type | Cost | Authentication Required |
+|----------|------|------|------------------------|
+| **Ollama** | Local | Free | None - runs locally |
+| **OpenAI** | Cloud | Paid | API key |
+| **Anthropic Claude** | Cloud | Paid | API key |
+| **Google Gemini** | Cloud | Free tier + Paid | API key |
+| **Azure OpenAI** | Cloud | Paid | API key + endpoint |
+| **SiliconFlow** | Cloud | Free tier + Paid | API key |
+| **302.AI** | Cloud | Free tier + Paid | API key |
+| **Custom OpenAI-compatible** | Various | Varies | Varies |
+
+**Configuration Files:**
+- `config/ai_providers.yaml.example` - Template with all providers documented
+- `config/ai_providers.yaml` - Your custom configuration (gitignored)
+- `scripts/check_ai_config.py` - Validation and testing tool
+
+**Getting Started:**
+
+1. **Free Local Option (Recommended for beginners):**
+   ```bash
+   # Install Ollama from https://ollama.com
+   ollama pull llama3
+   
+   # Configure in ai_providers.yaml
+   ollama:
+     enabled: true
+     base_url: "http://localhost:11434"
+     default_model: "llama3"
+   ```
+
+2. **Cloud Options:**
+   ```yaml
+   # OpenAI (GPT-4, GPT-3.5)
+   openai:
+     enabled: true
+     api_key: "${OPENAI_API_KEY}"
+     default_model: "gpt-4-turbo-preview"
+   
+   # Gemini (Free tier available)
+   gemini:
+     enabled: true
+     api_key: "${GOOGLE_API_KEY}"
+     default_model: "gemini-1.5-pro"
+   ```
+
+3. **Validate Configuration:**
+   ```bash
+   # Check configuration
+   python scripts/check_ai_config.py
+   
+   # Test connectivity
+   python scripts/check_ai_config.py --test-connectivity
+   ```
+
+**Security:**
+- Always use environment variables for API keys: `${OPENAI_API_KEY}`
+- Never commit actual keys to version control
+- `config/ai_providers.yaml` is in `.gitignore` for protection
+
+**See:** 
+- [CONFIGURATION.md - AI Provider Configuration](CONFIGURATION.md#ai-provider-configuration) for detailed setup
+- [README-MCP-FAQ.md](../README-MCP-FAQ.md) for Ollama setup guide
+- `config/ai_providers.yaml.example` for all configuration options
 
 ---
 
